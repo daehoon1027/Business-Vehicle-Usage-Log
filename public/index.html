@@ -2,102 +2,299 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>법인차량 운행일지 v30</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>???? ????</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
-        * { font-family: 'Noto Sans KR', sans-serif; box-sizing: border-box; }
-        body { background-color: #f1f5f9; padding: 5px; }
-        input, select { height: 38px !important; font-size: 13px !important; border: 1px solid #d1d5db; border-radius: 4px; padding: 0 8px; width: 100%; }
-        .round-trip-container { display: flex; align-items: center; height: 38px; gap: 8px; }
-        .round-trip-container input[type="checkbox"] { width: 16px !important; height: 16px !important; cursor: pointer; }
-        .round-trip-container label { font-size: 13px; font-weight: bold; white-space: nowrap; }
+        * { box-sizing: border-box; font-family: 'Noto Sans KR', sans-serif; }
+        body { margin: 0; background-color: #f1f5f9; padding: 8px; color: #1f2937; }
+        input, select {
+            width: 100%;
+            height: 38px !important;
+            font-size: 13px !important;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            padding: 0 8px;
+            background: #ffffff;
+        }
+        input:focus, select:focus {
+            outline: 2px solid rgba(37, 99, 235, 0.18);
+            border-color: #2563eb;
+        }
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .admin-trigger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9999px;
+            background: #eff6ff;
+            cursor: pointer;
+            user-select: none;
+            font-size: 18px;
+            line-height: 1;
+        }
+        .admin-trigger:hover { background: #dbeafe; }
+        .round-trip-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            height: 38px;
+        }
+        .round-trip-container input[type="checkbox"] {
+            width: 16px !important;
+            height: 16px !important;
+            cursor: pointer;
+        }
+        .round-trip-container label {
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            margin: 0;
+        }
         .receipt-box {
             display: flex;
             align-items: center;
+            gap: 8px;
+            min-height: 38px;
+            padding: 4px 10px;
             background: #f9fafb;
             border: 1px solid #d1d5db;
             border-radius: 4px;
-            height: 38px;
-            padding: 0 10px;
+            overflow: hidden;
         }
-        .receipt-label { font-size: 13px; color: #374151; white-space: nowrap; margin-right: 8px; display: flex; align-items: center; }
-        #receiptFile {
-            border: none !important;
-            font-size: 12px !important;
+        .receipt-label {
+            flex: 0 0 auto;
             display: inline-flex;
             align-items: center;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-            cursor: pointer;
-            line-height: normal;
+            height: 28px;
+            font-size: 13px;
+            color: #374151;
+            white-space: nowrap;
         }
-        table { min-width: 1000px; width: 100%; border-collapse: collapse; font-size: 11px; background: white; }
-        th { background: #1e3a8a; color: white; padding: 10px 2px; border: 1px solid #94a3b8; }
-        td { padding: 10px 4px; border: 1px solid #cbd5e1; text-align: center; }
-        .bg-dist { background-color: #eff6ff; font-weight: bold; color: #1d4ed8; }
+        .receipt-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 0 0 auto;
+        }
+        .receipt-button {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 28px;
+            padding: 0 10px;
+            border: 1px solid #9ca3af;
+            border-radius: 4px;
+            background: #ffffff;
+            color: #111827;
+            font-size: 12px;
+            line-height: 1;
+            cursor: pointer;
+        }
+        .receipt-button:hover { background: #f3f4f6; }
+        .receipt-file-name {
+            flex: 1 1 auto;
+            min-width: 0;
+            font-size: 12px;
+            color: #374151;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .receipt-input-hidden { display: none !important; }
+        .desktop-log-section table {
+            min-width: 1000px;
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            background: #ffffff;
+        }
+        .desktop-log-section th {
+            background: #1e3a8a;
+            color: #ffffff;
+            padding: 10px 2px;
+            border: 1px solid #94a3b8;
+        }
+        .desktop-log-section td {
+            padding: 10px 4px;
+            border: 1px solid #cbd5e1;
+            text-align: center;
+        }
+        .bg-dist { background-color: #eff6ff; font-weight: 700; color: #1d4ed8; }
         .hidden-admin { display: none; }
-        @media print { .no-print, .print-hide { display: none !important; } }
+        .mobile-preview-section { display: none; }
+        .mobile-card {
+            background: #ffffff;
+            border: 1px solid #dbe2ea;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+            padding: 14px;
+        }
+        .mobile-preview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .mobile-preview-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 8px 10px;
+        }
+        .mobile-preview-item.full { grid-column: 1 / -1; }
+        .mobile-preview-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 2px;
+        }
+        .mobile-preview-value {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            word-break: break-word;
+        }
+        @media print {
+            .no-print, .print-hide { display: none !important; }
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+                background: #eef2f7;
+            }
+            .max-w-7xl {
+                width: 100%;
+                max-width: none;
+                padding: 8px;
+            }
+            .desktop-log-section {
+                display: none;
+            }
+            .mobile-preview-section {
+                display: block;
+            }
+            .mobile-only-stack {
+                grid-column: 1 / -1;
+            }
+            .receipt-box {
+                align-items: flex-start;
+                flex-wrap: wrap;
+                padding: 8px 10px;
+            }
+            .receipt-label {
+                width: 100%;
+                height: auto;
+            }
+            .receipt-actions {
+                width: 100%;
+            }
+            .receipt-button {
+                flex: 1 1 0;
+            }
+            .receipt-file-name {
+                width: 100%;
+                flex-basis: 100%;
+                line-height: 1.35;
+                white-space: normal;
+            }
+            .admin-panel {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+                justify-content: flex-end;
+            }
+            .admin-panel button {
+                margin: 0 !important;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="max-w-7xl mx-auto">
         <div class="mb-4 no-print bg-white rounded-lg shadow-md p-4">
-            <h2 class="font-bold text-gray-800 mb-4 border-b pb-2">실시간 운행 기록</h2>
+            <div class="section-heading mb-4 border-b pb-2">
+                <h2 class="font-bold text-gray-800">???? ????</h2>
+                <button type="button" class="admin-trigger" onclick="handleAdmin()" aria-label="??? ?? ??">??</button>
+            </div>
             <form id="logForm" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 <input type="hidden" id="editKey">
+                <input type="hidden" id="receiptData">
+                <input type="hidden" id="receiptName">
+
                 <input type="date" id="driveDate" required>
-                <input type="text" id="carNumInput" oninput="saveCarNum()" placeholder="차량번호" class="bg-yellow-50 font-bold">
-                <input type="text" id="userName" placeholder="사용자" required>
+                <input type="text" id="carNumInput" oninput="saveCarNum()" placeholder="????" class="bg-yellow-50 font-bold">
+                <input type="text" id="userName" placeholder="???" required>
                 <select id="userDept">
-                    <option value="">본부 선택</option>
-                    <option value="사업개발본부">사업개발본부</option>
-                    <option value="원천기술개발본부">원천기술개발본부</option>
-                    <option value="생산관리본부">생산관리본부</option>
-                    <option value="경영기획본부">경영기획본부</option>
-                    <option value="경영관리본부">경영관리본부</option>
+                    <option value="">?? ??</option>
+                    <option value="??????">??????</option>
+                    <option value="????????">????????</option>
+                    <option value="??????">??????</option>
+                    <option value="??????">??????</option>
+                    <option value="??????">??????</option>
                 </select>
-                <div class="md:col-span-2 flex gap-2">
-                    <input type="text" id="startLoc" value="회사(문지캠퍼스)">
-                    <input type="text" id="endLoc" placeholder="도착지">
+                <div class="md:col-span-2 flex gap-2 mobile-only-stack">
+                    <input type="text" id="startLoc" value="??(?????)">
+                    <input type="text" id="endLoc" placeholder="???">
                 </div>
                 <div class="round-trip-container">
                     <input type="checkbox" id="isRoundTrip">
-                    <label for="isRoundTrip">왕복</label>
+                    <label for="isRoundTrip">??</label>
                 </div>
-                <input type="text" id="purpose" placeholder="운행 목적">
-                <div class="flex gap-2">
-                    <input type="number" id="startKm" placeholder="주행전(km)" class="bg-blue-50 font-bold">
-                    <input type="number" id="endKm" placeholder="주행후(km)" class="font-bold">
+                <input type="text" id="purpose" placeholder="?? ??">
+                <div class="flex gap-2 mobile-only-stack">
+                    <input type="number" id="startKm" placeholder="???(km)" class="bg-blue-50 font-bold">
+                    <input type="number" id="endKm" placeholder="???(km)" class="font-bold">
                 </div>
-                <input type="number" id="expense" placeholder="주유금액(원)">
-                <div class="md:col-span-2 receipt-box">
-                    <span class="receipt-label">주유비 영수증:</span>
-                    <input type="file" id="receiptFile" accept="image/*">
+                <input type="number" id="expense" placeholder="????(?)">
+                <div class="md:col-span-2 receipt-box mobile-only-stack">
+                    <span class="receipt-label">??? ???:</span>
+                    <div class="receipt-actions">
+                        <button type="button" id="receiptCameraBtn" class="receipt-button">?? ??</button>
+                        <button type="button" id="receiptBrowseBtn" class="receipt-button">?? ??</button>
+                    </div>
+                    <span id="receiptFileName" class="receipt-file-name">??? ?? ??</span>
+                    <input type="file" id="receiptCameraFile" accept="image/*" capture="environment" class="receipt-input-hidden">
+                    <input type="file" id="receiptFile" accept="image/*" class="receipt-input-hidden">
                 </div>
-                <input type="hidden" id="receiptData">
-                <button type="submit" id="submitBtn" class="bg-blue-700 text-white rounded font-bold h-[38px] hover:bg-blue-800">DB 저장</button>
+                <button type="submit" id="submitBtn" class="bg-blue-700 text-white rounded font-bold h-[38px] hover:bg-blue-800 mobile-only-stack">DB ??</button>
             </form>
         </div>
 
-        <div class="bg-white rounded-lg shadow-xl p-3">
+        <div class="mobile-preview-section no-print mb-4">
+            <div class="mobile-card">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-base font-black text-blue-900">?? ?? ???</h3>
+                    <span class="text-xs text-slate-500">??? ???? 1?</span>
+                </div>
+                <div id="mobilePreviewEmpty" class="text-sm text-slate-500">?? ?? ???? ??? ?? ?? 1?? ?????.</div>
+                <div id="mobilePreviewGrid" class="mobile-preview-grid"></div>
+            </div>
+        </div>
+
+        <div class="desktop-log-section bg-white rounded-lg shadow-xl p-3">
             <div class="flex justify-between items-center mb-3">
-                <h1 class="text-xl font-black text-blue-900 cursor-pointer select-none" onclick="handleAdmin()">법인차량 운행일지</h1>
-                <div class="space-x-2 no-print">
-                    <button id="resetBtn" onclick="resetAll()" class="bg-red-600 text-white px-3 py-1 rounded text-xs hidden-admin">전체 초기화</button>
-                    <button onclick="exportExcel()" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold">엑셀 저장</button>
-                    <button onclick="window.print()" class="bg-gray-800 text-white px-3 py-1 rounded text-xs font-bold">인쇄</button>
+                <h1 class="text-xl font-black text-blue-900 select-none">???? ????</h1>
+                <div class="space-x-2 no-print admin-panel">
+                    <button id="resetBtn" onclick="resetAll()" class="bg-red-600 text-white px-3 py-1 rounded text-xs hidden-admin">?? ??? ???</button>
+                    <button onclick="exportExcel()" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold">?? ??</button>
+                    <button onclick="window.print()" class="bg-gray-800 text-white px-3 py-1 rounded text-xs font-bold">??</button>
                 </div>
             </div>
             <table>
                 <thead>
                     <tr>
-                        <th>일자</th><th>사용자</th><th>부서</th><th>출발지</th><th>도착지</th><th>왕복</th><th>목적</th><th>전(km)</th><th>후(km)</th><th>거리</th><th>주유금액</th><th class="print-hide">증빙</th><th class="no-print">관리</th>
+                        <th>??</th><th>???</th><th>??</th><th>???</th><th>???</th><th>??</th><th>??</th><th>?(km)</th><th>?(km)</th><th>??</th><th>????</th><th class="print-hide">??</th><th class="no-print">??</th>
                     </tr>
                 </thead>
                 <tbody id="logList"></tbody>
@@ -106,10 +303,10 @@
     </div>
 
     <div id="imgModal" class="fixed inset-0 bg-black bg-opacity-90 hidden z-50 flex flex-col items-center justify-center p-4">
-        <img id="fullImg" src="" class="max-w-full max-h-[80vh] rounded mb-4" alt="영수증 이미지">
+        <img id="fullImg" src="" class="max-w-full max-h-[80vh] rounded mb-4" alt="??? ???">
         <div class="flex gap-4">
-            <button id="modalDown" class="bg-blue-600 text-white px-6 py-2 rounded font-bold">다운로드</button>
-            <button onclick="closeModal()" class="bg-gray-500 text-white px-6 py-2 rounded font-bold">닫기</button>
+            <button id="modalDown" class="bg-blue-600 text-white px-6 py-2 rounded font-bold">????</button>
+            <button onclick="closeModal()" class="bg-gray-500 text-white px-6 py-2 rounded font-bold">??</button>
         </div>
     </div>
 
@@ -127,46 +324,171 @@
         firebase.initializeApp(firebaseConfig);
 
         const db = firebase.database().ref("carLogs");
+        const form = document.getElementById("logForm");
+        const receiptDataInput = document.getElementById("receiptData");
+        const receiptNameInput = document.getElementById("receiptName");
+        const receiptFileInput = document.getElementById("receiptFile");
+        const receiptCameraInput = document.getElementById("receiptCameraFile");
+        const receiptFileName = document.getElementById("receiptFileName");
+        const receiptBrowseBtn = document.getElementById("receiptBrowseBtn");
+        const receiptCameraBtn = document.getElementById("receiptCameraBtn");
+        const mobilePreviewEmpty = document.getElementById("mobilePreviewEmpty");
+        const mobilePreviewGrid = document.getElementById("mobilePreviewGrid");
+        const formFieldIds = ["driveDate", "carNumInput", "userName", "userDept", "startLoc", "endLoc", "purpose", "startKm", "endKm", "expense", "isRoundTrip"];
         let logsData = {};
         let clickCount = 0;
+        let clickTimer = null;
+        let lastPreviewRecord = null;
 
-        function handleAdmin() {
-            clickCount += 1;
-            if (clickCount === 3) {
-                document.getElementById("resetBtn").classList.toggle("hidden-admin");
-                clickCount = 0;
-            }
-            setTimeout(() => {
-                clickCount = 0;
-            }, 2000);
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#39;");
         }
 
-        db.on("value", (snap) => {
-            logsData = snap.val() || {};
-            render();
-        });
+        function xmlEscape(value) {
+            return String(value ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&apos;");
+        }
 
-        function render() {
+        function toNumber(value) {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : 0;
+        }
+
+        function formatNumber(value) {
+            return toNumber(value).toLocaleString("ko-KR");
+        }
+
+        function todayText() {
+            return new Date().toISOString().slice(0, 10);
+        }
+
+        function sortRecords(items) {
+            return [...items].sort((a, b) => new Date(a.date) - new Date(b.date));
+        }
+
+        function sanitizeFilePart(value) {
+            return String(value || "")
+                .trim()
+                .replace(/[\\/:*?"<>|]/g, "-")
+                .replace(/\s+/g, " ")
+                .slice(0, 80) || "???";
+        }
+
+        function getGeneratedReceiptName(extension = "jpg") {
+            const date = sanitizeFilePart(document.getElementById("driveDate").value || todayText());
+            const user = sanitizeFilePart(document.getElementById("userName").value || "???");
+            const start = sanitizeFilePart(document.getElementById("startLoc").value || "???");
+            const end = sanitizeFilePart(document.getElementById("endLoc").value || "???");
+            return `${date}_${user}_${start} ${end}.${extension}`;
+        }
+
+        function getFileExtension(fileName) {
+            const parts = String(fileName || "").split(".");
+            return parts.length > 1 ? parts.pop().toLowerCase() : "jpg";
+        }
+
+        function getCurrentDraftRecord() {
+            const record = {
+                date: document.getElementById("driveDate").value,
+                carNum: document.getElementById("carNumInput").value.trim(),
+                user: document.getElementById("userName").value.trim(),
+                dept: document.getElementById("userDept").value,
+                start: document.getElementById("startLoc").value.trim(),
+                end: document.getElementById("endLoc").value.trim(),
+                round: document.getElementById("isRoundTrip").checked,
+                purpose: document.getElementById("purpose").value.trim(),
+                startKm: toNumber(document.getElementById("startKm").value),
+                endKm: toNumber(document.getElementById("endKm").value),
+                expense: toNumber(document.getElementById("expense").value),
+                receipt: receiptDataInput.value,
+                receiptName: receiptNameInput.value
+            };
+
+            const hasMeaningfulData = [record.date, record.user, record.start, record.end, record.purpose, record.carNum, record.dept]
+                .some((value) => String(value || "").trim() !== "")
+                || record.startKm > 0
+                || record.endKm > 0
+                || record.expense > 0
+                || record.receipt;
+
+            return hasMeaningfulData ? record : null;
+        }
+
+        function getMobilePreviewRecord(sortedRecords) {
+            const draft = getCurrentDraftRecord();
+            if (draft) return draft;
+            if (lastPreviewRecord) return lastPreviewRecord;
+            return sortedRecords.length ? sortedRecords[sortedRecords.length - 1] : null;
+        }
+
+        function renderMobilePreview(previewRecord) {
+            if (!previewRecord) {
+                mobilePreviewEmpty.style.display = "block";
+                mobilePreviewGrid.innerHTML = "";
+                return;
+            }
+
+            mobilePreviewEmpty.style.display = "none";
+            const distance = Math.max(toNumber(previewRecord.endKm) - toNumber(previewRecord.startKm), 0);
+            const items = [
+                ["??", previewRecord.date || "-"],
+                ["???", previewRecord.user || "-"],
+                ["??", previewRecord.dept || "-"],
+                ["????", previewRecord.carNum || "-"],
+                ["???", previewRecord.start || "-", true],
+                ["???", previewRecord.end || "-", true],
+                ["??", previewRecord.round ? "Y" : "-"],
+                ["??", previewRecord.purpose || "-", true],
+                ["?(km)", formatNumber(previewRecord.startKm)],
+                ["?(km)", formatNumber(previewRecord.endKm)],
+                ["??", formatNumber(distance)],
+                ["????", formatNumber(previewRecord.expense)],
+                ["???", previewRecord.receiptName || (previewRecord.receipt ? "??? ??? ???" : "??"), true]
+            ];
+
+            mobilePreviewGrid.innerHTML = items.map(([label, value, full]) => `
+                <div class="mobile-preview-item${full ? " full" : ""}">
+                    <div class="mobile-preview-label">${escapeHtml(label)}</div>
+                    <div class="mobile-preview-value">${escapeHtml(value)}</div>
+                </div>
+            `).join("");
+        }
+
+        function renderDesktopTable(sortedRecords) {
             const tbody = document.getElementById("logList");
             tbody.innerHTML = "";
-            const sorted = Object.keys(logsData)
-                .map((key) => ({ ...logsData[key], key }))
-                .sort((a, b) => new Date(a.date) - new Date(b.date));
 
             let lastKm = 0;
-            sorted.forEach((item) => {
-                const diff = (item.endKm - item.startKm) || 0;
-                lastKm = item.endKm;
+            sortedRecords.forEach((item) => {
+                const diff = Math.max(toNumber(item.endKm) - toNumber(item.startKm), 0);
+                lastKm = toNumber(item.endKm);
+                const safeReceiptName = escapeHtml(item.receiptName || `???_${item.date}_${item.user}.png`);
                 tbody.innerHTML += `
                     <tr>
-                        <td>${item.date}</td><td class="font-bold">${item.user}</td><td>${item.dept}</td>
-                        <td>${item.start}</td><td>${item.end}</td><td>${item.round ? "Y" : "-"}</td><td>${item.purpose}</td>
-                        <td>${item.startKm}</td><td>${item.endKm}</td><td class="bg-dist">${diff}</td>
-                        <td class="text-red-600 font-bold">${Number(item.expense).toLocaleString()}</td>
-                        <td class="print-hide">${item.receipt ? `<button onclick="openModal('${item.receipt}', '${item.date}_${item.user}')" class="text-blue-600 font-bold underline">확인</button>` : "-"}</td>
+                        <td>${escapeHtml(item.date)}</td>
+                        <td class="font-bold">${escapeHtml(item.user)}</td>
+                        <td>${escapeHtml(item.dept)}</td>
+                        <td>${escapeHtml(item.start)}</td>
+                        <td>${escapeHtml(item.end)}</td>
+                        <td>${item.round ? "Y" : "-"}</td>
+                        <td>${escapeHtml(item.purpose)}</td>
+                        <td>${formatNumber(item.startKm)}</td>
+                        <td>${formatNumber(item.endKm)}</td>
+                        <td class="bg-dist">${formatNumber(diff)}</td>
+                        <td class="text-red-600 font-bold">${formatNumber(item.expense)}</td>
+                        <td class="print-hide">${item.receipt ? `<button onclick="openModal('${item.receipt}', '${safeReceiptName}')" class="text-blue-600 font-bold underline">??</button>` : "-"}</td>
                         <td class="no-print">
-                            <button onclick="editLog('${item.key}')" class="text-blue-500 mr-2">수정</button>
-                            <button onclick="deleteLog('${item.key}')" class="text-red-300">삭제</button>
+                            <button onclick="editLog('${item.key}')" class="text-blue-500 mr-2">??</button>
+                            <button onclick="deleteLog('${item.key}')" class="text-red-300">??</button>
                         </td>
                     </tr>`;
             });
@@ -176,58 +498,126 @@
             }
         }
 
+        function render() {
+            const sortedRecords = sortRecords(Object.keys(logsData).map((key) => ({ ...logsData[key], key })));
+            renderDesktopTable(sortedRecords);
+            renderMobilePreview(getMobilePreviewRecord(sortedRecords));
+        }
+
+        function handleAdmin() {
+            clickCount += 1;
+            if (clickTimer) clearTimeout(clickTimer);
+            if (clickCount === 3) {
+                document.getElementById("resetBtn").classList.toggle("hidden-admin");
+                clickCount = 0;
+                clickTimer = null;
+                return;
+            }
+            clickTimer = setTimeout(() => {
+                clickCount = 0;
+                clickTimer = null;
+            }, 2000);
+        }
+
+        db.on("value", (snap) => {
+            logsData = snap.val() || {};
+            render();
+        });
+
         function editLog(key) {
             const item = logsData[key];
             document.getElementById("editKey").value = key;
             document.getElementById("driveDate").value = item.date;
+            document.getElementById("carNumInput").value = item.carNum || "";
             document.getElementById("userName").value = item.user;
             document.getElementById("userDept").value = item.dept;
             document.getElementById("startLoc").value = item.start;
             document.getElementById("endLoc").value = item.end;
-            document.getElementById("isRoundTrip").checked = item.round;
+            document.getElementById("isRoundTrip").checked = !!item.round;
             document.getElementById("purpose").value = item.purpose;
             document.getElementById("startKm").value = item.startKm;
             document.getElementById("endKm").value = item.endKm;
             document.getElementById("expense").value = item.expense;
-            document.getElementById("receiptData").value = item.receipt || "";
-            document.getElementById("submitBtn").innerText = "내용 수정";
-            window.scrollTo(0, 0);
+            receiptDataInput.value = item.receipt || "";
+            receiptNameInput.value = item.receiptName || "";
+            receiptFileName.textContent = item.receiptName || (item.receipt ? "??? ??? ???" : "??? ?? ??");
+            document.getElementById("submitBtn").innerText = "?? ??";
+            lastPreviewRecord = item;
+            render();
+            window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
         function deleteLog(key) {
-            if (prompt("삭제 비밀번호를 입력하세요.") === "7890") {
+            if (prompt("?? ????? ?????.") === "7890") {
                 db.child(key).remove();
             }
         }
 
         function resetAll() {
-            if (confirm("전체 초기화하시겠습니까?") && prompt("마스터 비밀번호") === "clear1234") {
+            if (confirm("?? ???? ??????????") && prompt("??? ????") === "aldaver147!") {
                 db.remove();
+                lastPreviewRecord = null;
             }
         }
 
         function exportExcel() {
-            const header = ["일자", "사용자", "부서", "출발지", "도착지", "왕복", "목적", "전(km)", "후(km)", "거리", "주유비"];
-            const rows = Object.values(logsData)
-                .sort((a, b) => new Date(a.date) - new Date(b.date))
-                .map((item) => [
-                    item.date,
-                    item.user,
-                    item.dept,
-                    item.start,
-                    item.end,
+            const records = sortRecords(Object.values(logsData));
+            const header = ["??", "???", "??", "???", "???", "??", "??", "?(km)", "?(km)", "??", "???"];
+            const rows = records.map((item) => {
+                const distance = Math.max(toNumber(item.endKm) - toNumber(item.startKm), 0);
+                return [
+                    item.date || "",
+                    item.user || "",
+                    item.dept || "",
+                    item.start || "",
+                    item.end || "",
                     item.round ? "Y" : "-",
-                    item.purpose,
-                    item.startKm,
-                    item.endKm,
-                    item.endKm - item.startKm,
-                    item.expense
-                ]);
-            const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
-            ws["!cols"] = [{ wch: 12 }, { wch: 10 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 5 }, { wch: 25 }, { wch: 10 }, { wch: 10 }, { wch: 8 }, { wch: 10 }];
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "운행기록");
-            XLSX.writeFile(wb, "법인차량운행일지.xlsx");
+                    item.purpose || "",
+                    toNumber(item.startKm),
+                    toNumber(item.endKm),
+                    distance,
+                    toNumber(item.expense)
+                ];
+            });
+
+            const numericIndexes = new Set([7, 8, 9, 10]);
+            const htmlRows = [header, ...rows].map((row, rowIndex) => `
+                <tr>
+                    ${row.map((cell, colIndex) => {
+                        if (rowIndex === 0) return `<th>${xmlEscape(cell)}</th>`;
+                        if (numericIndexes.has(colIndex)) return `<td class="num">${toNumber(cell)}</td>`;
+                        const className = colIndex === 0 ? "date" : "text";
+                        return `<td class="${className}">${xmlEscape(cell)}</td>`;
+                    }).join("")}
+                </tr>
+            `).join("");
+
+            const excelHtml = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="UTF-8">
+                    <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>????</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+                    <style>
+                        table { border-collapse: collapse; }
+                        th, td { border: 1px solid #5b6573; padding: 6px 8px; font-size: 11pt; }
+                        th { background: #1e3a8a; color: #ffffff; font-weight: 700; text-align: center; }
+                        td.text { text-align: center; }
+                        td.date { mso-number-format: "yyyy-mm-dd"; }
+                        td.num { text-align: right; mso-number-format: "#,##0"; }
+                    </style>
+                </head>
+                <body>
+                    <table>${htmlRows}</table>
+                </body>
+                </html>`;
+
+            const blob = new Blob(["\uFEFF" + excelHtml], { type: "application/vnd.ms-excel;charset=utf-8;" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "????????.xls";
+            link.click();
+            URL.revokeObjectURL(url);
         }
 
         function openModal(base64, name) {
@@ -235,7 +625,7 @@
             document.getElementById("modalDown").onclick = () => {
                 const a = document.createElement("a");
                 a.href = base64;
-                a.download = `영수증_${name}.png`;
+                a.download = name || "???.png";
                 a.click();
             };
             document.getElementById("imgModal").classList.remove("hidden");
@@ -245,23 +635,56 @@
             document.getElementById("imgModal").classList.add("hidden");
         }
 
-        document.getElementById("logForm").addEventListener("submit", function (e) {
-            e.preventDefault();
-            const key = document.getElementById("editKey").value;
-            const entry = {
-                date: document.getElementById("driveDate").value,
-                carNum: document.getElementById("carNumInput").value,
-                user: document.getElementById("userName").value,
-                dept: document.getElementById("userDept").value,
-                start: document.getElementById("startLoc").value,
-                end: document.getElementById("endLoc").value,
-                round: document.getElementById("isRoundTrip").checked,
-                purpose: document.getElementById("purpose").value,
-                startKm: parseFloat(document.getElementById("startKm").value) || 0,
-                endKm: parseFloat(document.getElementById("endKm").value) || 0,
-                expense: document.getElementById("expense").value || 0,
-                receipt: document.getElementById("receiptData").value
+        function clearReceiptState() {
+            receiptDataInput.value = "";
+            receiptNameInput.value = "";
+            receiptFileName.textContent = "??? ?? ??";
+            receiptFileInput.value = "";
+            receiptCameraInput.value = "";
+        }
+
+        function handleReceiptSelection(file, mode) {
+            if (!file) {
+                receiptFileName.textContent = "??? ?? ??";
+                receiptNameInput.value = "";
+                return;
+            }
+
+            const extension = getFileExtension(file.name || "jpg");
+            const receiptName = mode === "camera" ? getGeneratedReceiptName(extension) : file.name;
+            receiptNameInput.value = receiptName;
+            receiptFileName.textContent = receiptName;
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                receiptDataInput.value = event.target.result;
+                render();
             };
+            reader.readAsDataURL(file);
+        }
+
+        function buildEntry() {
+            return {
+                date: document.getElementById("driveDate").value,
+                carNum: document.getElementById("carNumInput").value.trim(),
+                user: document.getElementById("userName").value.trim(),
+                dept: document.getElementById("userDept").value,
+                start: document.getElementById("startLoc").value.trim(),
+                end: document.getElementById("endLoc").value.trim(),
+                round: document.getElementById("isRoundTrip").checked,
+                purpose: document.getElementById("purpose").value.trim(),
+                startKm: toNumber(document.getElementById("startKm").value),
+                endKm: toNumber(document.getElementById("endKm").value),
+                expense: toNumber(document.getElementById("expense").value),
+                receipt: receiptDataInput.value,
+                receiptName: receiptNameInput.value
+            };
+        }
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            const key = document.getElementById("editKey").value;
+            const entry = buildEntry();
 
             if (key) {
                 db.child(key).set(entry);
@@ -269,21 +692,30 @@
                 db.push(entry);
             }
 
+            lastPreviewRecord = entry;
             this.reset();
             document.getElementById("driveDate").valueAsDate = new Date();
             document.getElementById("editKey").value = "";
-            document.getElementById("submitBtn").innerText = "DB 저장";
+            document.getElementById("submitBtn").innerText = "DB ??";
+            clearReceiptState();
+            render();
         });
 
-        document.getElementById("receiptFile").addEventListener("change", function (e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    document.getElementById("receiptData").value = ev.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
+        receiptBrowseBtn.addEventListener("click", () => receiptFileInput.click());
+        receiptCameraBtn.addEventListener("click", () => receiptCameraInput.click());
+
+        receiptFileInput.addEventListener("change", (event) => {
+            handleReceiptSelection(event.target.files[0], "file");
+        });
+
+        receiptCameraInput.addEventListener("change", (event) => {
+            handleReceiptSelection(event.target.files[0], "camera");
+        });
+
+        formFieldIds.forEach((id) => {
+            const element = document.getElementById(id);
+            const eventName = element.type === "checkbox" || element.tagName === "SELECT" ? "change" : "input";
+            element.addEventListener(eventName, () => render());
         });
 
         function saveCarNum() {
@@ -296,6 +728,7 @@
             if (savedCarNum) {
                 document.getElementById("carNumInput").value = savedCarNum;
             }
+            render();
         });
     </script>
 </body>
