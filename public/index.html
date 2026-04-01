@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>???? ????</title>
+    <title>&#48277;&#51064;&#52264;&#47049; &#50868;&#54665;&#51068;&#51648;</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -224,8 +224,8 @@
     <div class="max-w-7xl mx-auto">
         <div class="mb-4 no-print bg-white rounded-lg shadow-md p-4">
             <div class="section-heading mb-4 border-b pb-2">
-                <h2 class="font-bold text-gray-800">???? ????</h2>
-                <button type="button" class="admin-trigger" onclick="handleAdmin()" aria-label="??? ?? ??">??</button>
+                <h2 class="font-bold text-gray-800">&#48277;&#51064;&#52264;&#47049; &#50868;&#54665;&#44592;&#47197;</h2>
+                <button type="button" class="admin-trigger" onclick="handleAdmin()" aria-label="&#44288;&#47532;&#51088; &#47700;&#45684; &#50676;&#44592;">??</button>
             </div>
             <form id="logForm" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 <input type="hidden" id="editKey">
@@ -233,68 +233,68 @@
                 <input type="hidden" id="receiptName">
 
                 <input type="date" id="driveDate" required>
-                <input type="text" id="carNumInput" oninput="saveCarNum()" placeholder="????" class="bg-yellow-50 font-bold">
-                <input type="text" id="userName" placeholder="???" required>
+                <input type="text" id="carNumInput" oninput="saveCarNum()" placeholder="&#52264;&#47049;&#48264;&#54840;" class="bg-yellow-50 font-bold">
+                <input type="text" id="userName" placeholder="&#49324;&#50857;&#51088;" required>
                 <select id="userDept">
-                    <option value="">?? ??</option>
-                    <option value="??????">??????</option>
-                    <option value="????????">????????</option>
-                    <option value="??????">??????</option>
-                    <option value="??????">??????</option>
-                    <option value="??????">??????</option>
+                    <option value="">&#48376;&#48512; &#49440;&#53469;</option>
+                    <option value="&#49324;&#50629;&#44060;&#48156;&#48376;&#48512;">&#49324;&#50629;&#44060;&#48156;&#48376;&#48512;</option>
+                    <option value="&#50896;&#52380;&#44592;&#49696;&#44060;&#48156;&#48376;&#48512;">&#50896;&#52380;&#44592;&#49696;&#44060;&#48156;&#48376;&#48512;</option>
+                    <option value="&#49373;&#49328;&#44288;&#47532;&#48376;&#48512;">&#49373;&#49328;&#44288;&#47532;&#48376;&#48512;</option>
+                    <option value="&#44221;&#50689;&#44592;&#54925;&#48376;&#48512;">&#44221;&#50689;&#44592;&#54925;&#48376;&#48512;</option>
+                    <option value="&#44221;&#50689;&#44288;&#47532;&#48376;&#48512;">&#44221;&#50689;&#44288;&#47532;&#48376;&#48512;</option>
                 </select>
                 <div class="md:col-span-2 flex gap-2 mobile-only-stack">
-                    <input type="text" id="startLoc" value="??(?????)">
-                    <input type="text" id="endLoc" placeholder="???">
+                    <input type="text" id="startLoc" value="&#54924;&#49324;(&#47928;&#51648;&#52896;&#54140;&#49828;)">
+                    <input type="text" id="endLoc" placeholder="&#46020;&#52265;&#51648;">
                 </div>
                 <div class="round-trip-container">
                     <input type="checkbox" id="isRoundTrip">
-                    <label for="isRoundTrip">??</label>
+                    <label for="isRoundTrip">&#50773;&#48373;</label>
                 </div>
-                <input type="text" id="purpose" placeholder="?? ??">
+                <input type="text" id="purpose" placeholder="&#50868;&#54665; &#47785;&#51201;">
                 <div class="flex gap-2 mobile-only-stack">
-                    <input type="number" id="startKm" placeholder="???(km)" class="bg-blue-50 font-bold">
-                    <input type="number" id="endKm" placeholder="???(km)" class="font-bold">
+                    <input type="number" id="startKm" placeholder="&#51452;&#54665;&#51204;(km)" class="bg-blue-50 font-bold">
+                    <input type="number" id="endKm" placeholder="&#51452;&#54665;&#54980;(km)" class="font-bold">
                 </div>
-                <input type="number" id="expense" placeholder="????(?)">
+                <input type="number" id="expense" placeholder="&#51452;&#50976;&#44552;&#50529;(원)">
                 <div class="md:col-span-2 receipt-box mobile-only-stack">
-                    <span class="receipt-label">??? ???:</span>
+                    <span class="receipt-label">&#51452;&#50976;&#48708; &#50689;&#49688;&#51613;:</span>
                     <div class="receipt-actions">
-                        <button type="button" id="receiptCameraBtn" class="receipt-button">?? ??</button>
-                        <button type="button" id="receiptBrowseBtn" class="receipt-button">?? ??</button>
+                        <button type="button" id="receiptCameraBtn" class="receipt-button">&#49324;&#51652; &#52524;&#50689;</button>
+                        <button type="button" id="receiptBrowseBtn" class="receipt-button">&#54028;&#51068; &#49440;&#53469;</button>
                     </div>
-                    <span id="receiptFileName" class="receipt-file-name">??? ?? ??</span>
+                    <span id="receiptFileName" class="receipt-file-name">&#49440;&#53469;&#46108; &#54028;&#51068; &#50630;&#51020;</span>
                     <input type="file" id="receiptCameraFile" accept="image/*" capture="environment" class="receipt-input-hidden">
                     <input type="file" id="receiptFile" accept="image/*" class="receipt-input-hidden">
                 </div>
-                <button type="submit" id="submitBtn" class="bg-blue-700 text-white rounded font-bold h-[38px] hover:bg-blue-800 mobile-only-stack">DB ??</button>
+                <button type="submit" id="submitBtn" class="bg-blue-700 text-white rounded font-bold h-[38px] hover:bg-blue-800 mobile-only-stack">DB &#51200;&#51109;</button>
             </form>
         </div>
 
         <div class="mobile-preview-section no-print mb-4">
             <div class="mobile-card">
                 <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-base font-black text-blue-900">?? ?? ???</h3>
-                    <span class="text-xs text-slate-500">??? ???? 1?</span>
+                    <h3 class="text-base font-black text-blue-900">&#54788;&#51116; &#51077;&#47141; &#45936;&#51060;&#53552;</h3>
+                    <span class="text-xs text-slate-500">&#47784;&#48148;&#51068; &#48120;&#47532;&#48372;&#44592; 1&#44148;</span>
                 </div>
-                <div id="mobilePreviewEmpty" class="text-sm text-slate-500">?? ?? ???? ??? ?? ?? 1?? ?????.</div>
+                <div id="mobilePreviewEmpty" class="text-sm text-slate-500">&#51077;&#47141; &#51473;&#51064; &#45936;&#51060;&#53552;&#44032; &#50630;&#51004;&#47732; &#52572;&#44540; &#51200;&#51109; 1&#44148;&#51060; &#54364;&#49884;&#46121;&#45768;&#45796;.</div>
                 <div id="mobilePreviewGrid" class="mobile-preview-grid"></div>
             </div>
         </div>
 
         <div class="desktop-log-section bg-white rounded-lg shadow-xl p-3">
             <div class="flex justify-between items-center mb-3">
-                <h1 class="text-xl font-black text-blue-900 select-none">???? ????</h1>
+                <h1 class="text-xl font-black text-blue-900 select-none">&#48277;&#51064;&#52264;&#47049; &#50868;&#54665;&#51068;&#51648;</h1>
                 <div class="space-x-2 no-print admin-panel">
-                    <button id="resetBtn" onclick="resetAll()" class="bg-red-600 text-white px-3 py-1 rounded text-xs hidden-admin">?? ??? ???</button>
-                    <button onclick="exportExcel()" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold">?? ??</button>
-                    <button onclick="window.print()" class="bg-gray-800 text-white px-3 py-1 rounded text-xs font-bold">??</button>
+                    <button id="resetBtn" onclick="resetAll()" class="bg-red-600 text-white px-3 py-1 rounded text-xs hidden-admin">&#51204;&#52404; &#45936;&#51060;&#53552; &#52488;&#44592;&#54868;</button>
+                    <button onclick="exportExcel()" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold">&#50641;&#49472; &#51200;&#51109;</button>
+                    <button onclick="window.print()" class="bg-gray-800 text-white px-3 py-1 rounded text-xs font-bold">&#51064;&#49604;</button>
                 </div>
             </div>
             <table>
                 <thead>
                     <tr>
-                        <th>??</th><th>???</th><th>??</th><th>???</th><th>???</th><th>??</th><th>??</th><th>?(km)</th><th>?(km)</th><th>??</th><th>????</th><th class="print-hide">??</th><th class="no-print">??</th>
+                        <th>&#51068;&#51088;</th><th>&#49324;&#50857;&#51088;</th><th>&#48512;&#49436;</th><th>&#52636;&#48156;&#51648;</th><th>&#46020;&#52265;&#51648;</th><th>&#50773;&#48373;</th><th>&#47785;&#51201;</th><th>&#51204;(km)</th><th>&#54980;(km)</th><th>&#44144;&#47532;</th><th>&#51452;&#50976;&#44552;&#50529;</th><th class="print-hide">&#51613;&#48729;</th><th class="no-print">&#44288;&#47532;</th>
                     </tr>
                 </thead>
                 <tbody id="logList"></tbody>
@@ -303,10 +303,10 @@
     </div>
 
     <div id="imgModal" class="fixed inset-0 bg-black bg-opacity-90 hidden z-50 flex flex-col items-center justify-center p-4">
-        <img id="fullImg" src="" class="max-w-full max-h-[80vh] rounded mb-4" alt="??? ???">
+        <img id="fullImg" src="" class="max-w-full max-h-[80vh] rounded mb-4" alt="&#50689;&#49688;&#51613; &#51060;&#48120;&#51648;">
         <div class="flex gap-4">
-            <button id="modalDown" class="bg-blue-600 text-white px-6 py-2 rounded font-bold">????</button>
-            <button onclick="closeModal()" class="bg-gray-500 text-white px-6 py-2 rounded font-bold">??</button>
+            <button id="modalDown" class="bg-blue-600 text-white px-6 py-2 rounded font-bold">&#45796;&#50868;&#47196;&#46300;</button>
+            <button onclick="closeModal()" class="bg-gray-500 text-white px-6 py-2 rounded font-bold">&#45803;&#44592;</button>
         </div>
     </div>
 
@@ -378,16 +378,16 @@
         function sanitizeFilePart(value) {
             return String(value || "")
                 .trim()
-                .replace(/[\\/:*?"<>|]/g, "-")
+                .replace(/[\/:*?"<>|]/g, "-")
                 .replace(/\s+/g, " ")
-                .slice(0, 80) || "???";
+                .slice(0, 80) || "미입력";
         }
 
         function getGeneratedReceiptName(extension = "jpg") {
             const date = sanitizeFilePart(document.getElementById("driveDate").value || todayText());
-            const user = sanitizeFilePart(document.getElementById("userName").value || "???");
-            const start = sanitizeFilePart(document.getElementById("startLoc").value || "???");
-            const end = sanitizeFilePart(document.getElementById("endLoc").value || "???");
+            const user = sanitizeFilePart(document.getElementById("userName").value || "미입력");
+            const start = sanitizeFilePart(document.getElementById("startLoc").value || "미입력");
+            const end = sanitizeFilePart(document.getElementById("endLoc").value || "미입력");
             return `${date}_${user}_${start} ${end}.${extension}`;
         }
 
@@ -440,19 +440,19 @@
             mobilePreviewEmpty.style.display = "none";
             const distance = Math.max(toNumber(previewRecord.endKm) - toNumber(previewRecord.startKm), 0);
             const items = [
-                ["??", previewRecord.date || "-"],
-                ["???", previewRecord.user || "-"],
-                ["??", previewRecord.dept || "-"],
-                ["????", previewRecord.carNum || "-"],
-                ["???", previewRecord.start || "-", true],
-                ["???", previewRecord.end || "-", true],
-                ["??", previewRecord.round ? "Y" : "-"],
-                ["??", previewRecord.purpose || "-", true],
+                ["일자", previewRecord.date || "-"],
+                ["미입력", previewRecord.user || "-"],
+                ["일자", previewRecord.dept || "-"],
+                ["차량번호", previewRecord.carNum || "-"],
+                ["미입력", previewRecord.start || "-", true],
+                ["미입력", previewRecord.end || "-", true],
+                ["일자", previewRecord.round ? "Y" : "-"],
+                ["일자", previewRecord.purpose || "-", true],
                 ["?(km)", formatNumber(previewRecord.startKm)],
                 ["?(km)", formatNumber(previewRecord.endKm)],
-                ["??", formatNumber(distance)],
-                ["????", formatNumber(previewRecord.expense)],
-                ["???", previewRecord.receiptName || (previewRecord.receipt ? "??? ??? ???" : "??"), true]
+                ["일자", formatNumber(distance)],
+                ["차량번호", formatNumber(previewRecord.expense)],
+                ["미입력", previewRecord.receiptName || (previewRecord.receipt ? "등록된 영수증 이미지" : "일자"), true]
             ];
 
             mobilePreviewGrid.innerHTML = items.map(([label, value, full]) => `
@@ -540,21 +540,21 @@
             document.getElementById("expense").value = item.expense;
             receiptDataInput.value = item.receipt || "";
             receiptNameInput.value = item.receiptName || "";
-            receiptFileName.textContent = item.receiptName || (item.receipt ? "??? ??? ???" : "??? ?? ??");
-            document.getElementById("submitBtn").innerText = "?? ??";
+            receiptFileName.textContent = item.receiptName || (item.receipt ? "등록된 영수증 이미지" : "선택된 파일 없음");
+            document.getElementById("submitBtn").innerText = "내용 수정";
             lastPreviewRecord = item;
             render();
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
 
         function deleteLog(key) {
-            if (prompt("?? ????? ?????.") === "7890") {
+            if (prompt("삭제 비밀번호를 입력하세요.") === "7890") {
                 db.child(key).remove();
             }
         }
 
         function resetAll() {
-            if (confirm("?? ???? ??????????") && prompt("??? ????") === "aldaver147!") {
+            if (confirm("전체 데이터를 초기화하시겠습니까?") && prompt("마스터 비밀번호") === "aldaver147!") {
                 db.remove();
                 lastPreviewRecord = null;
             }
@@ -562,7 +562,7 @@
 
         function exportExcel() {
             const records = sortRecords(Object.values(logsData));
-            const header = ["??", "???", "??", "???", "???", "??", "??", "?(km)", "?(km)", "??", "???"];
+            const header = ["일자", "미입력", "일자", "미입력", "미입력", "일자", "일자", "?(km)", "?(km)", "일자", "미입력"];
             const rows = records.map((item) => {
                 const distance = Math.max(toNumber(item.endKm) - toNumber(item.startKm), 0);
                 return [
@@ -596,7 +596,7 @@
                 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
                 <head>
                     <meta charset="UTF-8">
-                    <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>????</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+                    <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>운행기록</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
                     <style>
                         table { border-collapse: collapse; }
                         th, td { border: 1px solid #5b6573; padding: 6px 8px; font-size: 11pt; }
@@ -611,11 +611,11 @@
                 </body>
                 </html>`;
 
-            const blob = new Blob(["\uFEFF" + excelHtml], { type: "application/vnd.ms-excel;charset=utf-8;" });
+            const blob = new Blob(["﻿" + excelHtml], { type: "application/vnd.ms-excel;charset=utf-8;" });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.download = "????????.xls";
+            link.download = "법인차량운행일지.xls";
             link.click();
             URL.revokeObjectURL(url);
         }
@@ -625,7 +625,7 @@
             document.getElementById("modalDown").onclick = () => {
                 const a = document.createElement("a");
                 a.href = base64;
-                a.download = name || "???.png";
+                a.download = name || "영수증.png";
                 a.click();
             };
             document.getElementById("imgModal").classList.remove("hidden");
@@ -638,14 +638,14 @@
         function clearReceiptState() {
             receiptDataInput.value = "";
             receiptNameInput.value = "";
-            receiptFileName.textContent = "??? ?? ??";
+            receiptFileName.textContent = "선택된 파일 없음";
             receiptFileInput.value = "";
             receiptCameraInput.value = "";
         }
 
         function handleReceiptSelection(file, mode) {
             if (!file) {
-                receiptFileName.textContent = "??? ?? ??";
+                receiptFileName.textContent = "선택된 파일 없음";
                 receiptNameInput.value = "";
                 return;
             }
@@ -696,7 +696,7 @@
             this.reset();
             document.getElementById("driveDate").valueAsDate = new Date();
             document.getElementById("editKey").value = "";
-            document.getElementById("submitBtn").innerText = "DB ??";
+            document.getElementById("submitBtn").innerText = "DB 저장";
             clearReceiptState();
             render();
         });
