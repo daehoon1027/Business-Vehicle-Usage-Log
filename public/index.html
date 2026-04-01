@@ -103,6 +103,9 @@
             cursor: pointer;
         }
         .receipt-button:hover { background: #f3f4f6; }
+        .receipt-trigger { position: relative; overflow: hidden; }
+        .receipt-trigger input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .mobile-camera-only { display: none; }
         .receipt-file-name {
             flex: 1 1 auto;
             min-width: 0;
@@ -112,7 +115,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-        .receipt-input-hidden { display: none !important; }
         .desktop-log-section table {
             min-width: 1000px;
             width: 100%;
@@ -202,6 +204,9 @@
             .receipt-button {
                 flex: 1 1 0;
             }
+            .mobile-camera-only {
+                display: inline-flex;
+            }
             .receipt-file-name {
                 width: 100%;
                 flex-basis: 100%;
@@ -260,12 +265,10 @@
                 <div class="md:col-span-2 receipt-box mobile-only-stack">
                     <span class="receipt-label">&#51452;&#50976;&#48708; &#50689;&#49688;&#51613;:</span>
                     <div class="receipt-actions">
-                        <button type="button" id="receiptCameraBtn" class="receipt-button">&#49324;&#51652; &#52524;&#50689;</button>
-                        <button type="button" id="receiptBrowseBtn" class="receipt-button">&#54028;&#51068; &#49440;&#53469;</button>
+                        <label class="receipt-button receipt-trigger mobile-camera-only">&#49324;&#51652; &#52524;&#50689;<input type="file" id="receiptCameraFile" accept="image/*" capture="environment"></label>
+                        <label class="receipt-button receipt-trigger">&#54028;&#51068; &#49440;&#53469;<input type="file" id="receiptFile" accept="image/*"></label>
                     </div>
                     <span id="receiptFileName" class="receipt-file-name">&#49440;&#53469;&#46108; &#54028;&#51068; &#50630;&#51020;</span>
-                    <input type="file" id="receiptCameraFile" accept="image/*" capture="environment" class="receipt-input-hidden">
-                    <input type="file" id="receiptFile" accept="image/*" class="receipt-input-hidden">
                 </div>
                 <button type="submit" id="submitBtn" class="bg-blue-700 text-white rounded font-bold h-[38px] hover:bg-blue-800 mobile-only-stack">DB &#51200;&#51109;</button>
             </form>
@@ -330,8 +333,6 @@
         const receiptFileInput = document.getElementById("receiptFile");
         const receiptCameraInput = document.getElementById("receiptCameraFile");
         const receiptFileName = document.getElementById("receiptFileName");
-        const receiptBrowseBtn = document.getElementById("receiptBrowseBtn");
-        const receiptCameraBtn = document.getElementById("receiptCameraBtn");
         const mobilePreviewEmpty = document.getElementById("mobilePreviewEmpty");
         const mobilePreviewGrid = document.getElementById("mobilePreviewGrid");
         const formFieldIds = ["driveDate", "carNumInput", "userName", "userDept", "startLoc", "endLoc", "purpose", "startKm", "endKm", "expense", "isRoundTrip"];
@@ -701,8 +702,6 @@
             render();
         });
 
-        receiptBrowseBtn.addEventListener("click", () => receiptFileInput.click());
-        receiptCameraBtn.addEventListener("click", () => receiptCameraInput.click());
 
         receiptFileInput.addEventListener("change", (event) => {
             handleReceiptSelection(event.target.files[0], "file");
