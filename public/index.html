@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>법인차량 운행일지 v30</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap');
+        * { font-family: 'Noto Sans KR', sans-serif; box-sizing: border-box; }
+        body { background-color: #f1f5f9; padding: 5px; }
+        input, select { height: 38px !important; font-size: 13px !important; border: 1px solid #d1d5db; border-radius: 4px; padding: 0 8px; width: 100%; }
+        .round-trip-container { display: flex; align-items: center; height: 38px; gap: 8px; }
+        .round-trip-container input[type="checkbox"] { width: 16px !important; height: 16px !important; cursor: pointer; }
+        .round-trip-container label { font-size: 13px; font-weight: bold; white-space: nowrap; }
+        .receipt-box {
+            display: flex;
+            align-items: center;
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            height: 38px;
+            padding: 0 10px;
+        }
+        .receipt-label { font-size: 13px; color: #374151; white-space: nowrap; margin-right: 8px; display: flex; align-items: center; }
+        #receiptFile {
+            border: none !important;
+            font-size: 12px !important;
+            display: inline-flex;
+            align-items: center;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            line-height: normal;
+        }
+        table { min-width: 1000px; width: 100%; border-collapse: collapse; font-size: 11px; background: white; }
+        th { background: #1e3a8a; color: white; padding: 10px 2px; border: 1px solid #94a3b8; }
+        td { padding: 10px 4px; border: 1px solid #cbd5e1; text-align: center; }
+        .bg-dist { background-color: #eff6ff; font-weight: bold; color: #1d4ed8; }
+        .hidden-admin { display: none; }
+        @media print { .no-print, .print-hide { display: none !important; } }
+    </style>
+</head>
+<body>
+    <div class="max-w-7xl mx-auto">
+        <div class="mb-4 no-print bg-white rounded-lg shadow-md p-4">
+            <h2 class="font-bold text-gray-800 mb-4 border-b pb-2">실시간 운행 기록</h2>
+            <form id="logForm" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                <input type="hidden" id="editKey">
+                <input type="date" id="driveDate" required>
+                <input type="text" id="carNumInput" oninput="saveCarNum()" placeholder="차량번호" class="bg-yellow-50 font-bold">
+                <input type="text" id="userName" placeholder="사용자" required>
+                <select id="userDept">
+                    <option value="">본부 선택</option>
+                    <option value="사업개발본부">사업개발본부</option>
+                    <option value="원천기술개발본부">원천기술개발본부</option>
+                    <option value="생산관리본부">생산관리본부</option>
+                    <option value="경영기획본부">경영기획본부</option>
+                    <option value="경영관리본부">경영관리본부</option>
+                </select>
+                <div class="md:col-span-2 flex gap-2">
+                    <input type="text" id="startLoc" value="회사(문지캠퍼스)">
+                    <input type="text" id="endLoc" placeholder="도착지">
+                </div>
+                <div class="round-trip-container">
+                    <input type="checkbox" id="isRoundTrip">
+                    <label for="isRoundTrip">왕복</label>
+                </div>
+                <input type="text" id="purpose" placeholder="운행 목적">
+                <div class="flex gap-2">
+                    <input type="number" id="startKm" placeholder="주행전(km)" class="bg-blue-50 font-bold">
+                    <input type="number" id="endKm" placeholder="주행후(km)" class="font-bold">
+                </div>
+                <input type="number" id="expense" placeholder="주유금액(원)">
+                <div class="md:col-span-2 receipt-box">
+                    <span class="receipt-label">주유비 영수증:</span>
+                    <input type="file" id="receiptFile" accept="image/*">
+                </div>
+                <input type="hidden" id="receiptData">
+                <button type="submit" id="submitBtn" class="bg-blue-700 text-white rounded font-bold h-[38px] hover:bg-blue-800">DB 저장</button>
+            </form>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-xl p-3">
+            <div class="flex justify-between items-center mb-3">
+                <h1 class="text-xl font-black text-blue-900 cursor-pointer select-none" onclick="handleAdmin()">법인차량 운행일지</h1>
+                <div class="space-x-2 no-print">
+                    <button id="resetBtn" onclick="resetAll()" class="bg-red-600 text-white px-3 py-1 rounded text-xs hidden-admin">전체 초기화</button>
+                    <button onclick="exportExcel()" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-bold">엑셀 저장</button>
+                    <button onclick="window.print()" class="bg-gray-800 text-white px-3 py-1 rounded text-xs font-bold">인쇄</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>일자</th><th>사용자</th><th>부서</th><th>출발지</th><th>도착지</th><th>왕복</th><th>목적</th><th>전(km)</th><th>후(km)</th><th>거리</th><th>주유금액</th><th class="print-hide">증빙</th><th class="no-print">관리</th>
+                    </tr>
+                </thead>
+                <tbody id="logList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="imgModal" class="fixed inset-0 bg-black bg-opacity-90 hidden z-50 flex flex-col items-center justify-center p-4">
+        <img id="fullImg" src="" class="max-w-full max-h-[80vh] rounded mb-4" alt="영수증 이미지">
+        <div class="flex gap-4">
+            <button id="modalDown" class="bg-blue-600 text-white px-6 py-2 rounded font-bold">다운로드</button>
+            <button onclick="closeModal()" class="bg-gray-500 text-white px-6 py-2 rounded font-bold">닫기</button>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDS1S1ZVnt6AHttYgZvoT7LEGYI9CrHaqI",
+            authDomain: "business-vehicle-usage-log.firebaseapp.com",
+            databaseURL: "https://business-vehicle-usage-log-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "business-vehicle-usage-log",
+            storageBucket: "business-vehicle-usage-log.firebasestorage.app",
+            messagingSenderId: "15966219213",
+            appId: "1:15966219213:web:6396eaa916c671ec39b284"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        const db = firebase.database().ref("carLogs");
+        let logsData = {};
+        let clickCount = 0;
+
+        function handleAdmin() {
+            clickCount += 1;
+            if (clickCount === 3) {
+                document.getElementById("resetBtn").classList.toggle("hidden-admin");
+                clickCount = 0;
+            }
+            setTimeout(() => {
+                clickCount = 0;
+            }, 2000);
+        }
+
+        db.on("value", (snap) => {
+            logsData = snap.val() || {};
+            render();
+        });
+
+        function render() {
+            const tbody = document.getElementById("logList");
+            tbody.innerHTML = "";
+            const sorted = Object.keys(logsData)
+                .map((key) => ({ ...logsData[key], key }))
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            let lastKm = 0;
+            sorted.forEach((item) => {
+                const diff = (item.endKm - item.startKm) || 0;
+                lastKm = item.endKm;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.date}</td><td class="font-bold">${item.user}</td><td>${item.dept}</td>
+                        <td>${item.start}</td><td>${item.end}</td><td>${item.round ? "Y" : "-"}</td><td>${item.purpose}</td>
+                        <td>${item.startKm}</td><td>${item.endKm}</td><td class="bg-dist">${diff}</td>
+                        <td class="text-red-600 font-bold">${Number(item.expense).toLocaleString()}</td>
+                        <td class="print-hide">${item.receipt ? `<button onclick="openModal('${item.receipt}', '${item.date}_${item.user}')" class="text-blue-600 font-bold underline">확인</button>` : "-"}</td>
+                        <td class="no-print">
+                            <button onclick="editLog('${item.key}')" class="text-blue-500 mr-2">수정</button>
+                            <button onclick="deleteLog('${item.key}')" class="text-red-300">삭제</button>
+                        </td>
+                    </tr>`;
+            });
+
+            if (lastKm > 0 && !document.getElementById("editKey").value) {
+                document.getElementById("startKm").value = lastKm;
+            }
+        }
+
+        function editLog(key) {
+            const item = logsData[key];
+            document.getElementById("editKey").value = key;
+            document.getElementById("driveDate").value = item.date;
+            document.getElementById("userName").value = item.user;
+            document.getElementById("userDept").value = item.dept;
+            document.getElementById("startLoc").value = item.start;
+            document.getElementById("endLoc").value = item.end;
+            document.getElementById("isRoundTrip").checked = item.round;
+            document.getElementById("purpose").value = item.purpose;
+            document.getElementById("startKm").value = item.startKm;
+            document.getElementById("endKm").value = item.endKm;
+            document.getElementById("expense").value = item.expense;
+            document.getElementById("receiptData").value = item.receipt || "";
+            document.getElementById("submitBtn").innerText = "내용 수정";
+            window.scrollTo(0, 0);
+        }
+
+        function deleteLog(key) {
+            if (prompt("삭제 비밀번호를 입력하세요.") === "7890") {
+                db.child(key).remove();
+            }
+        }
+
+        function resetAll() {
+            if (confirm("전체 초기화하시겠습니까?") && prompt("마스터 비밀번호") === "clear1234") {
+                db.remove();
+            }
+        }
+
+        function exportExcel() {
+            const header = ["일자", "사용자", "부서", "출발지", "도착지", "왕복", "목적", "전(km)", "후(km)", "거리", "주유비"];
+            const rows = Object.values(logsData)
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .map((item) => [
+                    item.date,
+                    item.user,
+                    item.dept,
+                    item.start,
+                    item.end,
+                    item.round ? "Y" : "-",
+                    item.purpose,
+                    item.startKm,
+                    item.endKm,
+                    item.endKm - item.startKm,
+                    item.expense
+                ]);
+            const ws = XLSX.utils.aoa_to_sheet([header, ...rows]);
+            ws["!cols"] = [{ wch: 12 }, { wch: 10 }, { wch: 15 }, { wch: 20 }, { wch: 20 }, { wch: 5 }, { wch: 25 }, { wch: 10 }, { wch: 10 }, { wch: 8 }, { wch: 10 }];
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "운행기록");
+            XLSX.writeFile(wb, "법인차량운행일지.xlsx");
+        }
+
+        function openModal(base64, name) {
+            document.getElementById("fullImg").src = base64;
+            document.getElementById("modalDown").onclick = () => {
+                const a = document.createElement("a");
+                a.href = base64;
+                a.download = `영수증_${name}.png`;
+                a.click();
+            };
+            document.getElementById("imgModal").classList.remove("hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("imgModal").classList.add("hidden");
+        }
+
+        document.getElementById("logForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const key = document.getElementById("editKey").value;
+            const entry = {
+                date: document.getElementById("driveDate").value,
+                carNum: document.getElementById("carNumInput").value,
+                user: document.getElementById("userName").value,
+                dept: document.getElementById("userDept").value,
+                start: document.getElementById("startLoc").value,
+                end: document.getElementById("endLoc").value,
+                round: document.getElementById("isRoundTrip").checked,
+                purpose: document.getElementById("purpose").value,
+                startKm: parseFloat(document.getElementById("startKm").value) || 0,
+                endKm: parseFloat(document.getElementById("endKm").value) || 0,
+                expense: document.getElementById("expense").value || 0,
+                receipt: document.getElementById("receiptData").value
+            };
+
+            if (key) {
+                db.child(key).set(entry);
+            } else {
+                db.push(entry);
+            }
+
+            this.reset();
+            document.getElementById("driveDate").valueAsDate = new Date();
+            document.getElementById("editKey").value = "";
+            document.getElementById("submitBtn").innerText = "DB 저장";
+        });
+
+        document.getElementById("receiptFile").addEventListener("change", function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    document.getElementById("receiptData").value = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function saveCarNum() {
+            localStorage.setItem("car_num", document.getElementById("carNumInput").value);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("driveDate").valueAsDate = new Date();
+            const savedCarNum = localStorage.getItem("car_num");
+            if (savedCarNum) {
+                document.getElementById("carNumInput").value = savedCarNum;
+            }
+        });
+    </script>
+</body>
+</html>
