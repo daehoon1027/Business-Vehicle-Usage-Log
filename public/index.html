@@ -225,7 +225,7 @@
         <div class="mb-4 no-print bg-white rounded-lg shadow-md p-4">
             <div class="section-heading mb-4 border-b pb-2">
                 <h2 class="font-bold text-gray-800">&#48277;&#51064;&#52264;&#47049; &#50868;&#54665;&#44592;&#47197;</h2>
-                <button type="button" class="admin-trigger" onclick="handleAdmin()" aria-label="&#44288;&#47532;&#51088; &#47700;&#45684; &#50676;&#44592;">??</button>
+                <button type="button" class="admin-trigger" onclick="handleAdmin()" aria-label="&#44288;&#47532;&#51088; &#47700;&#45684; &#50676;&#44592;">&#128663;</button>
             </div>
             <form id="logForm" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 <input type="hidden" id="editKey">
@@ -441,18 +441,18 @@
             const distance = Math.max(toNumber(previewRecord.endKm) - toNumber(previewRecord.startKm), 0);
             const items = [
                 ["일자", previewRecord.date || "-"],
-                ["미입력", previewRecord.user || "-"],
-                ["일자", previewRecord.dept || "-"],
+                ["사용자", previewRecord.user || "-"],
+                ["부서", previewRecord.dept || "-"],
                 ["차량번호", previewRecord.carNum || "-"],
-                ["미입력", previewRecord.start || "-", true],
-                ["미입력", previewRecord.end || "-", true],
-                ["일자", previewRecord.round ? "Y" : "-"],
-                ["일자", previewRecord.purpose || "-", true],
-                ["?(km)", formatNumber(previewRecord.startKm)],
-                ["?(km)", formatNumber(previewRecord.endKm)],
-                ["일자", formatNumber(distance)],
-                ["차량번호", formatNumber(previewRecord.expense)],
-                ["미입력", previewRecord.receiptName || (previewRecord.receipt ? "등록된 영수증 이미지" : "일자"), true]
+                ["출발지", previewRecord.start || "-", true],
+                ["도착지", previewRecord.end || "-", true],
+                ["왕복", previewRecord.round ? "Y" : "-"],
+                ["목적", previewRecord.purpose || "-", true],
+                ["전(km)", formatNumber(previewRecord.startKm)],
+                ["후(km)", formatNumber(previewRecord.endKm)],
+                ["거리", formatNumber(distance)],
+                ["주유금액", formatNumber(previewRecord.expense)],
+                ["영수증", previewRecord.receiptName || (previewRecord.receipt ? "등록된 영수증 이미지" : "없음"), true]
             ];
 
             mobilePreviewGrid.innerHTML = items.map(([label, value, full]) => `
@@ -471,7 +471,7 @@
             sortedRecords.forEach((item) => {
                 const diff = Math.max(toNumber(item.endKm) - toNumber(item.startKm), 0);
                 lastKm = toNumber(item.endKm);
-                const safeReceiptName = escapeHtml(item.receiptName || `???_${item.date}_${item.user}.png`);
+                const safeReceiptName = escapeHtml(item.receiptName || `영수증_${item.date}_${item.user}.png`);
                 tbody.innerHTML += `
                     <tr>
                         <td>${escapeHtml(item.date)}</td>
@@ -485,10 +485,10 @@
                         <td>${formatNumber(item.endKm)}</td>
                         <td class="bg-dist">${formatNumber(diff)}</td>
                         <td class="text-red-600 font-bold">${formatNumber(item.expense)}</td>
-                        <td class="print-hide">${item.receipt ? `<button onclick="openModal('${item.receipt}', '${safeReceiptName}')" class="text-blue-600 font-bold underline">??</button>` : "-"}</td>
+                        <td class="print-hide">${item.receipt ? `<button onclick="openModal('${item.receipt}', '${safeReceiptName}')" class="text-blue-600 font-bold underline">확인</button>` : "-"}</td>
                         <td class="no-print">
-                            <button onclick="editLog('${item.key}')" class="text-blue-500 mr-2">??</button>
-                            <button onclick="deleteLog('${item.key}')" class="text-red-300">??</button>
+                            <button onclick="editLog('${item.key}')" class="text-blue-500 mr-2">수정</button>
+                            <button onclick="deleteLog('${item.key}')" class="text-red-300">삭제</button>
                         </td>
                     </tr>`;
             });
