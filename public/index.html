@@ -167,7 +167,17 @@
             color: #0f172a;
             word-break: break-word;
         }
-        .camera-shell { box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28); }`r`n        .camera-stage { position: relative; border-radius: 20px; overflow: hidden; background: #dbe4ee; aspect-ratio: 3 / 4; }`r`n        .camera-media { width: 100%; height: 100%; object-fit: cover; display: block; }`r`n        .camera-button-stack { display: grid; gap: 12px; }`r`n        .camera-action { width: 100%; border: 0; border-radius: 14px; padding: 14px 16px; font-size: 16px; font-weight: 800; }`r`n        .camera-action:disabled { opacity: 0.55; cursor: not-allowed; }`r`n        .camera-capture { background: #1f5a91; color: #ffffff; }`r`n        .camera-use { background: #7bc4ad; color: #ffffff; }`r`n        .camera-retake { background: #e8eef5; color: #51667d; }`r`n        .camera-close { background: #c63f37; color: #ffffff; }`r`n        @media print {
+        .camera-shell { box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28); }
+        .camera-stage { position: relative; border-radius: 20px; overflow: hidden; background: #dbe4ee; aspect-ratio: 3 / 4; }
+        .camera-media { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .camera-button-stack { display: grid; gap: 12px; }
+        .camera-action { width: 100%; border: 0; border-radius: 14px; padding: 14px 16px; font-size: 16px; font-weight: 800; }
+        .camera-action:disabled { opacity: 0.55; cursor: not-allowed; }
+        .camera-capture { background: #1f5a91; color: #ffffff; }
+        .camera-use { background: #7bc4ad; color: #ffffff; }
+        .camera-retake { background: #e8eef5; color: #51667d; }
+        .camera-close { background: #c63f37; color: #ffffff; }
+        @media print {
             .no-print, .print-hide { display: none !important; }
         }
         @media (max-width: 768px) {
@@ -813,6 +823,9 @@
             document.getElementById("editKey").value = "";
             document.getElementById("submitBtn").innerText = "DB 저장";
             clearReceiptState();
+            render();
+        });
+
         receiptFileInput.addEventListener("change", (event) => {
             handleReceiptSelection(event.target.files[0], "file");
         });
@@ -837,6 +850,19 @@
             event.preventDefault();
             closeCameraCaptureModal();
         });
+
+        formFieldIds.forEach((id) => {
+            const element = document.getElementById(id);
+            const eventName = element.type === "checkbox" || element.tagName === "SELECT" ? "change" : "input";
+            element.addEventListener(eventName, () => render());
+        });
+
+        function saveCarNum() {
+            localStorage.setItem("car_num", document.getElementById("carNumInput").value);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.getElementById("driveDate").valueAsDate = new Date();
             const savedCarNum = localStorage.getItem("car_num");
             if (savedCarNum) {
                 document.getElementById("carNumInput").value = savedCarNum;
@@ -846,9 +872,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
