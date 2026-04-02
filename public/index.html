@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -167,7 +167,7 @@
             color: #0f172a;
             word-break: break-word;
         }
-        @media print {
+        .camera-shell { box-shadow: 0 24px 60px rgba(15, 23, 42, 0.28); }`r`n        .camera-stage { position: relative; border-radius: 20px; overflow: hidden; background: #dbe4ee; aspect-ratio: 3 / 4; }`r`n        .camera-media { width: 100%; height: 100%; object-fit: cover; display: block; }`r`n        .camera-button-stack { display: grid; gap: 12px; }`r`n        .camera-action { width: 100%; border: 0; border-radius: 14px; padding: 14px 16px; font-size: 16px; font-weight: 800; }`r`n        .camera-action:disabled { opacity: 0.55; cursor: not-allowed; }`r`n        .camera-capture { background: #1f5a91; color: #ffffff; }`r`n        .camera-use { background: #7bc4ad; color: #ffffff; }`r`n        .camera-retake { background: #e8eef5; color: #51667d; }`r`n        .camera-close { background: #c63f37; color: #ffffff; }`r`n        @media print {
             .no-print, .print-hide { display: none !important; }
         }
         @media (max-width: 768px) {
@@ -265,7 +265,7 @@
                 <div class="md:col-span-2 receipt-box mobile-only-stack">
                     <span class="receipt-label">&#51452;&#50976;&#48708; &#50689;&#49688;&#51613;:</span>
                     <div class="receipt-actions">
-                        <label class="receipt-button receipt-trigger mobile-camera-only">&#49324;&#51652; &#52524;&#50689;<input type="file" id="receiptCameraFile" accept="image/*" capture="environment"></label>
+                        <button type="button" id="receiptCameraBtn" class="receipt-button mobile-camera-only">&#49324;&#51652; &#52524;&#50689;</button>
                         <label class="receipt-button receipt-trigger">&#54028;&#51068; &#49440;&#53469;<input type="file" id="receiptFile" accept="image/*"></label>
                     </div>
                     <span id="receiptFileName" class="receipt-file-name">&#49440;&#53469;&#46108; &#54028;&#51068; &#50630;&#51020;</span>
@@ -313,6 +313,25 @@
         </div>
     </div>
 
+
+    <div id="cameraModal" class="fixed inset-0 bg-black bg-opacity-80 hidden z-50 p-4 no-print">
+        <div class="camera-shell bg-white rounded-3xl w-full max-w-md mx-auto mt-2 p-4">
+            <h3 class="text-center text-xl font-black text-blue-900 mb-4">&#52852;&#47700;&#46972; &#52524;&#50689;</h3>
+            <div class="camera-stage">
+                <video id="cameraPreview" autoplay playsinline muted class="camera-media"></video>
+                <img id="cameraSnapshot" alt="&#52852;&#47700;&#46972; &#52524;&#50689; &#48120;&#47532;&#48372;&#44592;" class="camera-media hidden">
+                <canvas id="cameraCanvas" class="hidden"></canvas>
+            </div>
+            <div class="camera-button-stack mt-4">
+                <button type="button" id="cameraCaptureBtn" class="camera-action camera-capture">&#52524;&#50689;</button>
+                <button type="button" id="cameraUseBtn" class="camera-action camera-use" disabled>&#49324;&#50857;</button>
+                <button type="button" id="cameraRetakeBtn" class="camera-action camera-retake hidden">&#45796;&#49884;&#52524;&#50689;</button>
+                <button type="button" id="cameraCloseBtn" class="camera-action camera-close">&#45803;&#44592;</button>
+            </div>
+            <p class="text-center text-sm text-slate-500 mt-3">&#52524;&#50689; &#54980; &#49324;&#50857;&#51012; &#45572;&#47476;&#47732; &#52392;&#48512; &#54028;&#51068;&#47196; &#46321;&#47197;&#46121;&#45768;&#45796;.</p>
+        </div>
+    </div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDS1S1ZVnt6AHttYgZvoT7LEGYI9CrHaqI",
@@ -331,8 +350,16 @@
         const receiptDataInput = document.getElementById("receiptData");
         const receiptNameInput = document.getElementById("receiptName");
         const receiptFileInput = document.getElementById("receiptFile");
-        const receiptCameraInput = document.getElementById("receiptCameraFile");
+        const receiptCameraBtn = document.getElementById("receiptCameraBtn");
         const receiptFileName = document.getElementById("receiptFileName");
+        const cameraModal = document.getElementById("cameraModal");
+        const cameraPreview = document.getElementById("cameraPreview");
+        const cameraSnapshot = document.getElementById("cameraSnapshot");
+        const cameraCanvas = document.getElementById("cameraCanvas");
+        const cameraCaptureBtn = document.getElementById("cameraCaptureBtn");
+        const cameraUseBtn = document.getElementById("cameraUseBtn");
+        const cameraRetakeBtn = document.getElementById("cameraRetakeBtn");
+        const cameraCloseBtn = document.getElementById("cameraCloseBtn");
         const mobilePreviewEmpty = document.getElementById("mobilePreviewEmpty");
         const mobilePreviewGrid = document.getElementById("mobilePreviewGrid");
         const formFieldIds = ["driveDate", "carNumInput", "userName", "userDept", "startLoc", "endLoc", "purpose", "startKm", "endKm", "expense", "isRoundTrip"];
@@ -340,6 +367,9 @@
         let clickCount = 0;
         let clickTimer = null;
         let lastPreviewRecord = null;
+        let cameraStream = null;
+        let capturedReceiptData = "";
+        let capturedReceiptExtension = "jpg";
 
         function escapeHtml(value) {
             return String(value ?? "")
@@ -563,7 +593,7 @@
 
         function exportExcel() {
             const records = sortRecords(Object.values(logsData));
-            const header = ["일자", "미입력", "일자", "미입력", "미입력", "일자", "일자", "?(km)", "?(km)", "일자", "미입력"];
+            const header = ["일자", "사용자", "부서", "출발지", "도착지", "왕복", "목적", "전(km)", "후(km)", "거리", "주유비"];
             const rows = records.map((item) => {
                 const distance = Math.max(toNumber(item.endKm) - toNumber(item.startKm), 0);
                 return [
@@ -641,9 +671,9 @@
             receiptNameInput.value = "";
             receiptFileName.textContent = "선택된 파일 없음";
             receiptFileInput.value = "";
-            receiptCameraInput.value = "";
+            capturedReceiptData = "";
+            capturedReceiptExtension = "jpg";
         }
-
         function handleReceiptSelection(file, mode) {
             if (!file) {
                 receiptFileName.textContent = "선택된 파일 없음";
@@ -662,6 +692,90 @@
                 render();
             };
             reader.readAsDataURL(file);
+        }
+
+
+        async function openCameraModal() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert("이 기기나 브라우저에서는 직접 카메라 촬영이 지원되지 않습니다. 파일 선택을 이용해 주세요.");
+                return;
+            }
+
+            capturedReceiptData = "";
+            cameraUseBtn.disabled = true;
+            cameraRetakeBtn.classList.add("hidden");
+            cameraSnapshot.classList.add("hidden");
+            cameraPreview.classList.remove("hidden");
+            cameraModal.classList.remove("hidden");
+
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: { ideal: "environment" },
+                        width: { ideal: 1280 },
+                        height: { ideal: 960 }
+                    },
+                    audio: false
+                });
+                cameraPreview.srcObject = cameraStream;
+                await cameraPreview.play();
+            } catch (error) {
+                closeCameraCaptureModal();
+                alert("카메라 접근에 실패했습니다. 권한을 허용한 뒤 다시 시도해 주세요.");
+            }
+        }
+
+        function stopCameraStream() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach((track) => track.stop());
+                cameraStream = null;
+            }
+            cameraPreview.srcObject = null;
+        }
+
+        function captureCameraPhoto() {
+            const width = cameraPreview.videoWidth || 960;
+            const height = cameraPreview.videoHeight || 1280;
+            cameraCanvas.width = width;
+            cameraCanvas.height = height;
+            const context = cameraCanvas.getContext("2d");
+            context.drawImage(cameraPreview, 0, 0, width, height);
+            capturedReceiptData = cameraCanvas.toDataURL("image/jpeg", 0.92);
+            capturedReceiptExtension = "jpg";
+            cameraSnapshot.src = capturedReceiptData;
+            cameraSnapshot.classList.remove("hidden");
+            cameraPreview.classList.add("hidden");
+            cameraUseBtn.disabled = false;
+            cameraRetakeBtn.classList.remove("hidden");
+            stopCameraStream();
+        }
+
+        async function retakeCameraPhoto() {
+            closeCameraCaptureModal(false);
+            await openCameraModal();
+        }
+
+        function useCapturedPhoto() {
+            if (!capturedReceiptData) return;
+            receiptDataInput.value = capturedReceiptData;
+            receiptNameInput.value = getGeneratedReceiptName(capturedReceiptExtension);
+            receiptFileName.textContent = receiptNameInput.value;
+            closeCameraCaptureModal();
+            render();
+        }
+
+        function closeCameraCaptureModal(resetCapture = true) {
+            stopCameraStream();
+            cameraModal.classList.add("hidden");
+            cameraSnapshot.classList.add("hidden");
+            cameraPreview.classList.remove("hidden");
+            cameraSnapshot.src = "";
+            cameraUseBtn.disabled = true;
+            cameraRetakeBtn.classList.add("hidden");
+            if (resetCapture) {
+                capturedReceiptData = "";
+                capturedReceiptExtension = "jpg";
+            }
         }
 
         function buildEntry() {
@@ -699,30 +813,30 @@
             document.getElementById("editKey").value = "";
             document.getElementById("submitBtn").innerText = "DB 저장";
             clearReceiptState();
-            render();
-        });
-
-
         receiptFileInput.addEventListener("change", (event) => {
             handleReceiptSelection(event.target.files[0], "file");
         });
 
-        receiptCameraInput.addEventListener("change", (event) => {
-            handleReceiptSelection(event.target.files[0], "camera");
+        receiptCameraBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            openCameraModal();
         });
-
-        formFieldIds.forEach((id) => {
-            const element = document.getElementById(id);
-            const eventName = element.type === "checkbox" || element.tagName === "SELECT" ? "change" : "input";
-            element.addEventListener(eventName, () => render());
+        cameraCaptureBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            captureCameraPhoto();
         });
-
-        function saveCarNum() {
-            localStorage.setItem("car_num", document.getElementById("carNumInput").value);
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("driveDate").valueAsDate = new Date();
+        cameraUseBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            useCapturedPhoto();
+        });
+        cameraRetakeBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            retakeCameraPhoto();
+        });
+        cameraCloseBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            closeCameraCaptureModal();
+        });
             const savedCarNum = localStorage.getItem("car_num");
             if (savedCarNum) {
                 document.getElementById("carNumInput").value = savedCarNum;
@@ -732,3 +846,9 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
