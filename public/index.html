@@ -120,6 +120,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 11px;
+            table-layout: fixed;
             background: #ffffff;
         }
         .desktop-log-section th {
@@ -266,6 +267,10 @@
                     <input type="checkbox" id="isRoundTrip">
                     <label for="isRoundTrip">&#50773;&#48373;</label>
                 </div>
+                <div class="flex gap-2 mobile-only-stack">
+                    <input type="number" id="startKm" placeholder="&#51452;&#54665;&#51204;(km)" class="bg-blue-50 font-bold">
+                    <input type="number" id="endKm" placeholder="&#51452;&#54665;&#54980;(km)" class="font-bold">
+                </div>
                 <input type="text" id="purpose" placeholder="&#50868;&#54665; &#47785;&#51201;">
                 <select id="cardType">
                     <option value="">&#52852;&#46300; &#44396;&#48516; &#49440;&#53469;</option>
@@ -279,10 +284,6 @@
                     <option value="&#49688;&#47532;&#48708;">&#49688;&#47532;&#48708;</option>
                     <option value="&#44592;&#53440;">&#44592;&#53440;</option>
                 </select>
-                <div class="flex gap-2 mobile-only-stack">
-                    <input type="number" id="startKm" placeholder="&#51452;&#54665;&#51204;(km)" class="bg-blue-50 font-bold">
-                    <input type="number" id="endKm" placeholder="&#51452;&#54665;&#54980;(km)" class="font-bold">
-                </div>
                 <input type="number" id="expense" placeholder="&#52852;&#46300; &#49324;&#50857;&#44552;&#50529;(원)">
                 <div class="md:col-span-2 receipt-box mobile-only-stack">
                     <span class="receipt-label">&#52852;&#46300; &#50689;&#49688;&#51613;:</span>
@@ -319,7 +320,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>&#51068;&#51088;</th><th>&#49324;&#50857;&#51088;</th><th>&#48512;&#49436;</th><th>&#52636;&#48156;&#51648;</th><th>&#46020;&#52265;&#51648;</th><th>&#50773;&#48373;</th><th>&#47785;&#51201;</th><th>&#51204;(km)</th><th>&#54980;(km)</th><th>&#44144;&#47532;</th><th>&#52852;&#46300; &#49324;&#50857;&#44552;&#50529;</th><th class="print-hide">&#51613;&#48729;</th><th class="no-print">&#44288;&#47532;</th>
+                        <th>&#51068;&#51088;</th><th>&#49324;&#50857;&#51088;</th><th>&#48512;&#49436;</th><th>&#52636;&#48156;&#51648;</th><th>&#46020;&#52265;&#51648;</th><th>&#50773;&#48373;</th><th>&#47785;&#51201;</th><th>&#52852;&#46300; &#44396;&#48516;</th><th>&#52852;&#46300; &#49324;&#50857; &#45236;&#50669;</th><th>&#51204;(km)</th><th>&#54980;(km)</th><th>&#44144;&#47532;</th><th>&#52852;&#46300; &#49324;&#50857;&#44552;&#50529;</th><th class="print-hide">&#51613;&#48729;</th><th class="no-print">&#44288;&#47532;</th>
                     </tr>
                 </thead>
                 <tbody id="logList"></tbody>
@@ -502,12 +503,12 @@
                 ["출발지", previewRecord.start || "-", true],
                 ["도착지", previewRecord.end || "-", true],
                 ["왕복", previewRecord.round ? "Y" : "-"],
-                ["목적", previewRecord.purpose || "-", true],
-                ["카드 구분", previewRecord.cardType || "-"],
-                ["카드 사용 내역", previewRecord.cardUsage || "-", true],
                 ["전(km)", formatNumber(previewRecord.startKm)],
                 ["후(km)", formatNumber(previewRecord.endKm)],
                 ["거리", formatNumber(distance)],
+                ["목적", previewRecord.purpose || "-", true],
+                ["카드 구분", previewRecord.cardType || "-"],
+                ["카드 사용 내역", previewRecord.cardUsage || "-", true],
                 ["카드 사용금액", formatNumber(previewRecord.expense)],
                 ["영수증", previewRecord.receiptName || (previewRecord.receipt ? "등록된 영수증 이미지" : "없음"), true]
             ];
@@ -538,6 +539,8 @@
                         <td>${escapeHtml(item.end)}</td>
                         <td>${item.round ? "Y" : "-"}</td>
                         <td>${escapeHtml(item.purpose)}</td>
+                        <td>${escapeHtml(item.cardType || "-")}</td>
+                        <td>${escapeHtml(item.cardUsage || "-")}</td>
                         <td>${formatNumber(item.startKm)}</td>
                         <td>${formatNumber(item.endKm)}</td>
                         <td class="bg-dist">${formatNumber(diff)}</td>
@@ -892,5 +895,4 @@
     </script>
 </body>
 </html>
-
 
