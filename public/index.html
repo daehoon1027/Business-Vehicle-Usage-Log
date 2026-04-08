@@ -134,22 +134,33 @@
             border: 1px solid #cbd5e1;
             text-align: center;
         }
-        .desktop-log-section th:nth-child(2) { width: 5.5%; }
+        .desktop-log-section th:nth-child(2) { width: 5%; }
         .desktop-log-section th:nth-child(4),
-        .desktop-log-section th:nth-child(5) { width: 13.5%; }
+        .desktop-log-section th:nth-child(5) { width: 12.5%; }
         .desktop-log-section th:nth-child(6),
         .desktop-log-section th:nth-child(7),
         .desktop-log-section th:nth-child(8),
         .desktop-log-section th:nth-child(9),
         .desktop-log-section th:nth-child(13),
-        .desktop-log-section th:nth-child(14) { width: 4.5%; }
-        .desktop-log-section th:nth-child(10),
-        .desktop-log-section th:nth-child(11) { width: 6%; }
+        .desktop-log-section th:nth-child(14) { width: 4.25%; }
+        .desktop-log-section th:nth-child(10) { width: 9%; }
+        .desktop-log-section th:nth-child(11),
+        .desktop-log-section th:nth-child(12) { width: 5%; }
         .desktop-log-section th:nth-child(4),
         .desktop-log-section th:nth-child(5),
         .desktop-log-section td:nth-child(4),
         .desktop-log-section td:nth-child(5) {
             white-space: nowrap;
+        }
+        .mobile-preview-edit {
+            margin-top: 12px;
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            background: #1d4ed8;
+            color: #ffffff;
+            font-weight: 700;
+            padding: 10px 12px;
         }
         .bg-dist { background-color: #eff6ff; font-weight: 700; color: #1d4ed8; }
         .hidden-admin { display: none; }
@@ -321,6 +332,7 @@
                 </div>
                 <div id="mobilePreviewEmpty" class="text-sm text-slate-500">&#51077;&#47141; &#50756;&#47308; &#54980; DB &#51200;&#51109;&#51012; &#45572;&#47476;&#47732; &#54788;&#51116; &#51077;&#47141; &#45936;&#51060;&#53552; 1&#44148;&#51060; &#54364;&#49884;&#46121;&#45768;&#45796;.</div>
                 <div id="mobilePreviewGrid" class="mobile-preview-grid"></div>
+                <button type="button" id="mobilePreviewEditBtn" class="mobile-preview-edit hidden" onclick="editCurrentPreview()">수정</button>
             </div>
         </div>
 
@@ -401,6 +413,7 @@
         const cameraCloseBtn = document.getElementById("cameraCloseBtn");
         const mobilePreviewEmpty = document.getElementById("mobilePreviewEmpty");
         const mobilePreviewGrid = document.getElementById("mobilePreviewGrid");
+        const mobilePreviewEditBtn = document.getElementById("mobilePreviewEditBtn");
         const formFieldIds = ["driveDate", "userName", "userDept", "startLoc", "endLoc", "purpose", "cardType", "cardUsage", "startKm", "endKm", "expense", "isRoundTrip"];
         let logsData = {};
         let clickCount = 0;
@@ -503,10 +516,18 @@
             if (!previewRecord) {
                 mobilePreviewEmpty.style.display = "block";
                 mobilePreviewGrid.innerHTML = "";
+                mobilePreviewEditBtn.classList.add("hidden");
                 return;
             }
 
             mobilePreviewEmpty.style.display = "none";
+            if (previewRecord.key) {
+                mobilePreviewEditBtn.classList.remove("hidden");
+                mobilePreviewEditBtn.dataset.key = previewRecord.key;
+            } else {
+                mobilePreviewEditBtn.classList.add("hidden");
+                mobilePreviewEditBtn.dataset.key = "";
+            }
             const distance = Math.max(toNumber(previewRecord.endKm) - toNumber(previewRecord.startKm), 0);
             const items = [
                 ["일자", previewRecord.date || "-"],
@@ -596,6 +617,10 @@
             render();
         });
 
+        function editCurrentPreview() {
+            const key = mobilePreviewEditBtn.dataset.key;
+            if (key) editLog(key);
+        }
         function editLog(key) {
             const item = logsData[key];
             document.getElementById("editKey").value = key;
@@ -616,7 +641,7 @@
             receiptNameInput.value = item.receiptName || "";
             receiptFileName.textContent = item.receiptName || (item.receipt ? "등록된 영수증 이미지" : "선택된 파일 없음");
             document.getElementById("submitBtn").innerText = "내용 수정";
-            lastPreviewRecord = item;
+            lastPreviewRecord = { ...item, key };
             render();
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
@@ -845,14 +870,17 @@
             event.preventDefault();
             const key = document.getElementById("editKey").value;
             const entry = buildEntry();
+            let savedKey = key;
 
             if (key) {
                 db.child(key).set(entry);
             } else {
-                db.push(entry);
+                const newRef = db.push();
+                newRef.set(entry);
+                savedKey = newRef.key;
             }
 
-            lastPreviewRecord = entry;
+            lastPreviewRecord = { ...entry, key: savedKey };
             this.reset();
             document.getElementById("driveDate").valueAsDate = new Date();
             document.getElementById("editKey").value = "";
