@@ -138,11 +138,13 @@
         .desktop-log-section th:nth-child(4),
         .desktop-log-section th:nth-child(5) { width: 13.5%; }
         .desktop-log-section th:nth-child(6),
-        .desktop-log-section th:nth-child(12),
+        .desktop-log-section th:nth-child(7),
+        .desktop-log-section th:nth-child(8),
+        .desktop-log-section th:nth-child(9),
         .desktop-log-section th:nth-child(13),
         .desktop-log-section th:nth-child(14) { width: 4.5%; }
         .desktop-log-section th:nth-child(10),
-        .desktop-log-section th:nth-child(11) { width: 5%; }
+        .desktop-log-section th:nth-child(11) { width: 6%; }
         .desktop-log-section th:nth-child(4),
         .desktop-log-section th:nth-child(5),
         .desktop-log-section td:nth-child(4),
@@ -255,16 +257,16 @@
     <div class="max-w-7xl mx-auto">
         <div class="mb-4 no-print bg-white rounded-lg shadow-md p-4">
             <div class="section-heading mb-4 border-b pb-2">
-                <h2 class="font-bold text-gray-800">&#48277;&#51064;&#52264;&#47049; &#50868;&#54665;&#44592;&#47197;</h2>
+                <h2 class="font-bold text-gray-800">&#48277;&#51064;&#52264;&#47049;(240&#54616; 2150) &#50868;&#54665;&#44592;&#47197;</h2>
                 <button type="button" class="admin-trigger" onclick="handleAdmin()" aria-label="&#44288;&#47532;&#51088; &#47700;&#45684; &#50676;&#44592;">&#128663;</button>
             </div>
             <form id="logForm" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
                 <input type="hidden" id="editKey">
                 <input type="hidden" id="receiptData">
                 <input type="hidden" id="receiptName">
+                <input type="hidden" id="carNumInput" value="240&#54616; 2150">
 
                 <input type="date" id="driveDate" required>
-                <input type="text" id="carNumInput" oninput="saveCarNum()" placeholder="&#52264;&#47049;&#48264;&#54840;" class="bg-yellow-50 font-bold">
                 <input type="text" id="userName" placeholder="&#49324;&#50857;&#51088;" required>
                 <select id="userDept">
                     <option value="">&#48376;&#48512; &#49440;&#53469;</option>
@@ -274,19 +276,18 @@
                     <option value="&#44221;&#50689;&#44592;&#54925;&#48376;&#48512;">&#44221;&#50689;&#44592;&#54925;&#48376;&#48512;</option>
                     <option value="&#44221;&#50689;&#44288;&#47532;&#48376;&#48512;">&#44221;&#50689;&#44288;&#47532;&#48376;&#48512;</option>
                 </select>
-                <div class="md:col-span-2 flex gap-2 mobile-only-stack">
-                    <input type="text" id="startLoc" value="&#54924;&#49324;(&#47928;&#51648;&#52896;&#54140;&#49828;)">
-                    <input type="text" id="endLoc" placeholder="&#46020;&#52265;&#51648;">
-                </div>
-                <div class="round-trip-container">
-                    <input type="checkbox" id="isRoundTrip">
-                    <label for="isRoundTrip">&#50773;&#48373;</label>
-                </div>
                 <div class="flex gap-2 mobile-only-stack">
                     <input type="number" id="startKm" placeholder="&#51452;&#54665;&#51204;(km)" class="bg-blue-50 font-bold">
                     <input type="number" id="endKm" placeholder="&#51452;&#54665;&#54980;(km)" class="font-bold">
                 </div>
+                <input type="text" id="startLoc" value="&#54924;&#49324;(&#47928;&#51648;&#52896;&#54140;&#49828;)">
+                <input type="text" id="endLoc" placeholder="&#46020;&#52265;&#51648;">
                 <input type="text" id="purpose" placeholder="&#50868;&#54665; &#47785;&#51201;">
+                <div class="round-trip-container">
+                    <input type="checkbox" id="isRoundTrip">
+                    <label for="isRoundTrip">&#50773;&#48373;</label>
+                </div>
+                <div class="md:col-span-3 lg:col-span-4 text-xs font-bold text-slate-500 px-1">&#52264;&#47049; &#44288;&#47144; &#48708;&#50857; &#48156;&#49373; &#49884; &#51089;&#49457;</div>
                 <select id="cardType">
                     <option value="">&#52852;&#46300; &#44396;&#48516; &#49440;&#53469;</option>
                     <option value="&#48277;&#51064;&#52852;&#46300;">&#48277;&#51064;&#52852;&#46300;</option>
@@ -300,6 +301,7 @@
                     <option value="&#44592;&#53440;">&#44592;&#53440;</option>
                 </select>
                 <input type="number" id="expense" placeholder="&#52852;&#46300; &#49324;&#50857;&#44552;&#50529;(원)">
+                <button type="submit" id="submitBtn" class="bg-blue-700 text-white rounded font-bold h-[38px] hover:bg-blue-800 mobile-only-stack">DB &#51200;&#51109;</button>
                 <div class="md:col-span-2 receipt-box mobile-only-stack">
                     <span class="receipt-label">&#52852;&#46300; &#50689;&#49688;&#51613;:</span>
                     <div class="receipt-actions">
@@ -308,7 +310,6 @@
                     </div>
                     <span id="receiptFileName" class="receipt-file-name">&#49440;&#53469;&#46108; &#54028;&#51068; &#50630;&#51020;</span>
                 </div>
-                <button type="submit" id="submitBtn" class="bg-blue-700 text-white rounded font-bold h-[38px] hover:bg-blue-800 mobile-only-stack">DB &#51200;&#51109;</button>
             </form>
         </div>
 
@@ -318,7 +319,7 @@
                     <h3 class="text-base font-black text-blue-900">&#54788;&#51116; &#51077;&#47141; &#45936;&#51060;&#53552;</h3>
                     <span class="text-xs text-slate-500">&#47784;&#48148;&#51068; &#48120;&#47532;&#48372;&#44592; 1&#44148;</span>
                 </div>
-                <div id="mobilePreviewEmpty" class="text-sm text-slate-500">&#51077;&#47141; &#51473;&#51064; &#45936;&#51060;&#53552;&#44032; &#50630;&#51004;&#47732; &#52572;&#44540; &#51200;&#51109; 1&#44148;&#51060; &#54364;&#49884;&#46121;&#45768;&#45796;.</div>
+                <div id="mobilePreviewEmpty" class="text-sm text-slate-500">&#51077;&#47141; &#50756;&#47308; &#54980; DB &#51200;&#51109;&#51012; &#45572;&#47476;&#47732; &#54788;&#51116; &#51077;&#47141; &#45936;&#51060;&#53552; 1&#44148;&#51060; &#54364;&#49884;&#46121;&#45768;&#45796;.</div>
                 <div id="mobilePreviewGrid" class="mobile-preview-grid"></div>
             </div>
         </div>
@@ -335,7 +336,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th>&#51068;&#51088;</th><th>&#49324;&#50857;&#51088;</th><th>&#48512;&#49436;</th><th>&#52636;&#48156;&#51648;</th><th>&#46020;&#52265;&#51648;</th><th>&#50773;&#48373;</th><th>&#47785;&#51201;</th><th>&#52852;&#46300; &#44396;&#48516;</th><th>&#52852;&#46300;<br>&#49324;&#50857; &#45236;&#50669;</th><th>&#51204;<br>(km)</th><th>&#54980;<br>(km)</th><th>&#44144;&#47532;</th><th>&#52852;&#46300;<br>&#49324;&#50857;&#44552;&#50529;</th><th class="print-hide">&#51613;&#48729;</th><th class="no-print">&#44288;&#47532;</th>
+                        <th>&#51068;&#51088;</th><th>&#49324;&#50857;&#51088;</th><th>&#48512;&#49436;</th><th>&#52636;&#48156;&#51648;</th><th>&#46020;&#52265;&#51648;</th><th>&#50773;&#48373;</th><th>&#51204;<br>(km)</th><th>&#54980;<br>(km)</th><th>&#44144;&#47532;</th><th>&#47785;&#51201;</th><th>&#52852;&#46300; &#44396;&#48516;</th><th>&#52852;&#46300;<br>&#49324;&#50857; &#45236;&#50669;</th><th>&#52852;&#46300;<br>&#49324;&#50857;&#44552;&#50529;</th><th class="print-hide">&#51613;&#48729;</th><th class="no-print">&#44288;&#47532;</th>
                     </tr>
                 </thead>
                 <tbody id="logList"></tbody>
@@ -400,7 +401,7 @@
         const cameraCloseBtn = document.getElementById("cameraCloseBtn");
         const mobilePreviewEmpty = document.getElementById("mobilePreviewEmpty");
         const mobilePreviewGrid = document.getElementById("mobilePreviewGrid");
-        const formFieldIds = ["driveDate", "carNumInput", "userName", "userDept", "startLoc", "endLoc", "purpose", "cardType", "cardUsage", "startKm", "endKm", "expense", "isRoundTrip"];
+        const formFieldIds = ["driveDate", "userName", "userDept", "startLoc", "endLoc", "purpose", "cardType", "cardUsage", "startKm", "endKm", "expense", "isRoundTrip"];
         let logsData = {};
         let clickCount = 0;
         let clickTimer = null;
@@ -495,10 +496,7 @@
         }
 
         function getMobilePreviewRecord(sortedRecords) {
-            const draft = getCurrentDraftRecord();
-            if (draft) return draft;
-            if (lastPreviewRecord) return lastPreviewRecord;
-            return sortedRecords.length ? sortedRecords[sortedRecords.length - 1] : null;
+            return lastPreviewRecord;
         }
 
         function renderMobilePreview(previewRecord) {
@@ -514,7 +512,6 @@
                 ["일자", previewRecord.date || "-"],
                 ["사용자", previewRecord.user || "-"],
                 ["부서", previewRecord.dept || "-"],
-                ["차량번호", previewRecord.carNum || "-"],
                 ["출발지", previewRecord.start || "-", true],
                 ["도착지", previewRecord.end || "-", true],
                 ["왕복", previewRecord.round ? "Y" : "-"],
@@ -553,12 +550,12 @@
                         <td>${escapeHtml(item.start)}</td>
                         <td>${escapeHtml(item.end)}</td>
                         <td>${item.round ? "Y" : "-"}</td>
-                        <td>${escapeHtml(item.purpose)}</td>
-                        <td>${escapeHtml(item.cardType || "-")}</td>
-                        <td>${escapeHtml(item.cardUsage || "-")}</td>
                         <td>${formatNumber(item.startKm)}</td>
                         <td>${formatNumber(item.endKm)}</td>
                         <td class="bg-dist">${formatNumber(diff)}</td>
+                        <td>${escapeHtml(item.purpose)}</td>
+                        <td>${escapeHtml(item.cardType || "-")}</td>
+                        <td>${escapeHtml(item.cardUsage || "-")}</td>
                         <td class="text-red-600 font-bold">${formatNumber(item.expense)}</td>
                         <td class="print-hide">${item.receipt ? `<button onclick="openModal('${item.receipt}', '${safeReceiptName}')" class="text-blue-600 font-bold underline">확인</button>` : "-"}</td>
                         <td class="no-print">
@@ -603,7 +600,7 @@
             const item = logsData[key];
             document.getElementById("editKey").value = key;
             document.getElementById("driveDate").value = item.date;
-            document.getElementById("carNumInput").value = item.carNum || "";
+            document.getElementById("carNumInput").value = item.carNum || "240하 2150";
             document.getElementById("userName").value = item.user;
             document.getElementById("userDept").value = item.dept;
             document.getElementById("startLoc").value = item.start;
@@ -895,16 +892,11 @@
             element.addEventListener(eventName, () => render());
         });
 
-        function saveCarNum() {
-            localStorage.setItem("car_num", document.getElementById("carNumInput").value);
-        }
+        function saveCarNum() {}
 
         document.addEventListener("DOMContentLoaded", () => {
             document.getElementById("driveDate").valueAsDate = new Date();
-            const savedCarNum = localStorage.getItem("car_num");
-            if (savedCarNum) {
-                document.getElementById("carNumInput").value = savedCarNum;
-            }
+            document.getElementById("carNumInput").value = "240하 2150";
             render();
         });
     </script>
