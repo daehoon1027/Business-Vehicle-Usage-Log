@@ -279,7 +279,7 @@
 
                 <input type="date" id="driveDate" required>
                 <input type="text" id="userName" placeholder="&#49324;&#50857;&#51088;" required>
-                <select id="userDept">
+                <select id="userDept" required>
                     <option value="">&#48376;&#48512; &#49440;&#53469;</option>
                     <option value="&#49324;&#50629;&#44060;&#48156;&#48376;&#48512;">&#49324;&#50629;&#44060;&#48156;&#48376;&#48512;</option>
                     <option value="&#50896;&#52380;&#44592;&#49696;&#44060;&#48156;&#48376;&#48512;">&#50896;&#52380;&#44592;&#49696;&#44060;&#48156;&#48376;&#48512;</option>
@@ -292,8 +292,8 @@
                     <input type="number" id="endKm" placeholder="&#51452;&#54665;&#54980;(km)" class="font-bold">
                 </div>
                 <input type="text" id="startLoc" value="&#54924;&#49324;(&#47928;&#51648;&#52896;&#54140;&#49828;)">
-                <input type="text" id="endLoc" placeholder="&#46020;&#52265;&#51648;">
-                <input type="text" id="purpose" placeholder="&#50868;&#54665; &#47785;&#51201;">
+                <input type="text" id="endLoc" placeholder="&#46020;&#52265;&#51648;" required>
+                <input type="text" id="purpose" placeholder="&#50868;&#54665; &#47785;&#51201;" required>
                 <div class="round-trip-container">
                     <input type="checkbox" id="isRoundTrip">
                     <label for="isRoundTrip">&#50773;&#48373;</label>
@@ -357,6 +357,7 @@
     </div>
 
     <div id="imgModal" class="fixed inset-0 bg-black bg-opacity-90 hidden z-50 flex flex-col items-center justify-center p-4">
+        <button type="button" onclick="closeModal()" class="absolute top-4 right-4 bg-white text-gray-900 px-4 py-2 rounded font-bold z-10">&#45803;&#44592;</button>
         <img id="fullImg" src="" class="max-w-full max-h-[80vh] rounded mb-4" alt="&#50689;&#49688;&#51613; &#51060;&#48120;&#51648;">
         <div class="flex gap-4">
             <button id="modalDown" class="bg-blue-600 text-white px-6 py-2 rounded font-bold">&#45796;&#50868;&#47196;&#46300;</button>
@@ -732,6 +733,8 @@
 
         function closeModal() {
             document.getElementById("imgModal").classList.add("hidden");
+            document.getElementById("fullImg").src = "";
+            document.getElementById("modalDown").onclick = null;
         }
 
         function clearReceiptState() {
@@ -866,8 +869,30 @@
             };
         }
 
+        function validateRequiredFields() {
+            const requiredFields = [
+                { id: "userName", label: "사용자" },
+                { id: "userDept", label: "부서" },
+                { id: "endLoc", label: "도착지" },
+                { id: "purpose", label: "목적" }
+            ];
+
+            for (const field of requiredFields) {
+                const element = document.getElementById(field.id);
+                const value = String(element.value || "").trim();
+                if (!value) {
+                    alert(`${field.label} 항목을 입력해 주세요.`);
+                    element.focus();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         form.addEventListener("submit", function (event) {
             event.preventDefault();
+            if (!validateRequiredFields()) return;
             const key = document.getElementById("editKey").value;
             const entry = buildEntry();
             let savedKey = key;
