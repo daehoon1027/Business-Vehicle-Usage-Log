@@ -869,17 +869,18 @@
             };
         }
 
-        function validateRequiredFields() {
+        function validateRequiredFields(entry = null) {
             const requiredFields = [
-                { id: "userName", label: "사용자" },
-                { id: "userDept", label: "부서" },
-                { id: "endLoc", label: "도착지" },
-                { id: "purpose", label: "목적" }
+                { id: "userName", label: "사용자", value: entry?.user },
+                { id: "userDept", label: "부서", value: entry?.dept },
+                { id: "endLoc", label: "도착지", value: entry?.end },
+                { id: "purpose", label: "목적", value: entry?.purpose }
             ];
 
             for (const field of requiredFields) {
                 const element = document.getElementById(field.id);
-                const value = String(element.value || "").trim();
+                const rawValue = field.value ?? element.value;
+                const value = String(rawValue || "").trim();
                 if (!value) {
                     alert(`${field.label} 항목을 입력해 주세요.`);
                     element.focus();
@@ -892,9 +893,9 @@
 
         form.addEventListener("submit", function (event) {
             event.preventDefault();
-            if (!validateRequiredFields()) return;
             const key = document.getElementById("editKey").value;
             const entry = buildEntry();
+            if (!validateRequiredFields(entry)) return;
             let savedKey = key;
 
             if (key) {
