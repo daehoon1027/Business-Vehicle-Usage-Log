@@ -130,6 +130,10 @@
             border: 1px solid #94a3b8;
         }
         @media (min-width: 769px) {
+            .desktop-log-table-wrap {
+                max-height: calc(100vh - 260px);
+                overflow-y: auto;
+            }
             .desktop-log-section th {
                 position: sticky;
                 top: 0;
@@ -352,6 +356,7 @@
                     <button onclick="window.print()" class="bg-gray-800 text-white px-3 py-1 rounded text-xs font-bold">&#51064;&#49604;</button>
                 </div>
             </div>
+            <div class="desktop-log-table-wrap">
             <table>
                 <thead>
                     <tr>
@@ -360,6 +365,7 @@
                 </thead>
                 <tbody id="logList"></tbody>
             </table>
+            </div>
         </div>
     </div>
 
@@ -714,7 +720,8 @@
                     </style>
                 </head>
                 <body>
-                    <table>${htmlRows}</table>
+                    <div class="desktop-log-table-wrap">
+            <table>${htmlRows}</table>
                 </body>
                 </html>`;
 
