@@ -7,7 +7,9 @@
 
 ## 현재 구조
 
-- `public/index.html`: HTML, CSS, JavaScript가 모두 들어 있는 단일 페이지 앱
+- `public/index.html`: 앱 화면 구조
+- `public/assets/app.css`: 앱 스타일
+- `public/assets/app.js`: Firebase 연동 및 화면 동작
 - `firebase.json`: Firebase Hosting 배포 설정
 - `.firebaserc`: 기본 Firebase 프로젝트 설정
 - `차량운행일지.html`: 로컬 진입용 리다이렉트 파일
@@ -18,14 +20,16 @@
 - Firebase Realtime Database 실시간 반영
 - 차량번호 로컬 저장
 - 영수증 이미지 업로드 및 미리보기
+- 영수증 이미지는 Firebase Storage에 저장하고, Realtime Database에는 다운로드 URL과 파일 경로만 저장
 - 엑셀 파일 저장
 - 인쇄
 
 ## 기술 메모
 
-- 프런트엔드: 단일 HTML 파일
-- 스타일: Tailwind CDN + 인라인 CSS
+- 프런트엔드: 정적 HTML/CSS/JavaScript
+- 스타일: Tailwind CDN + `public/assets/app.css`
 - 데이터 저장: Firebase Realtime Database
+- 이미지 저장: Firebase Storage
 - 엑셀 내보내기: SheetJS CDN
 
 ## Firebase 연동 상태
@@ -34,9 +38,11 @@
 
 - 프로젝트 ID: `business-vehicle-usage-log`
 - DB 경로: `carLogs`
+- Storage 경로: `receipts/{운행기록키}/...`
 
 주의할 점:
 - Firebase 웹 설정값은 공개돼도 괜찮지만, 실제 접근 제어는 Database Rules로 해야 합니다.
+- 영수증 업로드를 쓰려면 Firebase Storage Rules도 현재 운영 방식에 맞게 설정되어 있어야 합니다.
 - 현재 앱은 로그인 없이 동작하고, 삭제/초기화 보호를 프런트엔드 비밀번호 프롬프트로만 처리합니다.
 - 이 방식은 보안 통제로 충분하지 않으므로, 이후에는 인증 또는 Rules 강화가 필요합니다.
 
@@ -65,7 +71,5 @@ firebase hosting:channel:deploy preview
 
 1. GitHub 원격 저장소 연결
 2. 현재 Firebase Database Rules 백업
-3. `public/index.html` 분리
-   HTML / CSS / JS 파일을 나누면 유지보수가 훨씬 쉬워집니다.
-4. Firebase Authentication 도입 검토
+3. Firebase Authentication 도입 검토
    사용자별 입력 권한과 삭제 권한을 안전하게 분리할 수 있습니다.
